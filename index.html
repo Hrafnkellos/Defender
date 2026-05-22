@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>DEFENDER!</title>
+  </head>
+  <style type="text/css">
+    body {
+        width: 900px;
+        margin: 0 auto;
+    }
+    canvas {
+        margin: 40px 0 0 0;
+    }
+  </style>
+  <body>
+
+    <canvas id="myCanvas" width="900" height="500" style="border: 1px solid black;">
+    Sorry, but your browser does not support the HTML5 canvas tag.
+    </canvas><br>
+    <h2>Controls</h2>
+    <p>Up: arrow up or W</p>
+    <p>Down: down arrow or S</p>
+    <p>Left: left arrow or A</p>
+    <p>Right: right arrow or D</p>
+    <p>Fire: Space</p>
+    <p>Bomb: Ctrl or Tab</p>
+    <p>Hyperspace: Shift or E</p>
+    <h2>Utilities</h2>
+    <p>Toggle Music: M</p>
+    <p>Pause: P</p>
+    <p>Step one frame (while paused): O</p>
+    <p>Toggle spatial debug: X</p>
+    <p>Halt ship: H</p>
+    <p>Switch camera mode: L</p>
+    <p>Quit: Q</p>
+
+    <div id="output"></div>
+
+    <script type="module" src="/src/games/defender/main.ts"></script>
+
+</body></html>
