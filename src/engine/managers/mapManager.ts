@@ -56,8 +56,10 @@ export const mapManager = {
         );
         drawLine(ctx, 0, 100, g_canvas.width, 100, "#76EEC6");
 
-        const frameLeft  = this.transposeXToMinimap(this.screenLeft);
-        const frameRight = this.transposeXToMinimap(this.screenRight);
+        const shipPos    = _shipPosFn ? _shipPosFn() : { posX: 2000, posY: 0 };
+        const offset     = shipPos.posX - 2000;
+        const frameLeft  = this.transposeXToMinimap(this.screenLeft  - offset);
+        const frameRight = this.transposeXToMinimap(this.screenRight - offset);
         const lc         = "white";
 
         drawLine(ctx, frameLeft,  0,   frameLeft,  20,  lc);
