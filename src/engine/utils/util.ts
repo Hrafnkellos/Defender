@@ -11,8 +11,10 @@ export function clampRange(value: number, lowBound: number, highBound: number): 
 }
 
 export function wrapRange(value: number, lowBound: number, highBound: number): number {
-    while (value < lowBound)  value += (highBound - lowBound);
-    while (value > highBound) value -= (highBound - lowBound);
+    const range = highBound - lowBound;
+    if (range <= 0) return value;
+    // Use modulo for O(1) wrapping instead of loops
+    value = ((value - lowBound) % range + range) % range + lowBound;
     return value;
 }
 

@@ -1,9 +1,10 @@
 // Generic rendering
 
-import { eatKey }    from '../input/keys';
+import { eatKey }         from '../input/keys';
 import { clearCanvas, fillBox } from '../utils/util';
-import { main }      from './main';
-import { update }    from './update';
+import { main }           from './main';
+import { update }         from './update';
+import { pauseMenu }      from './pauseMenu';
 
 export const render = {
 
@@ -44,6 +45,8 @@ export const render = {
         }
 
         if (this._undoBox) ctx.clearRect(200, 200, 50, 50);
+
+        if (main.paused) pauseMenu.render(ctx);
 
         ++this._frameCount;
     }

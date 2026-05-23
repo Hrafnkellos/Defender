@@ -3,20 +3,8 @@
 
 import { mapManager } from './mapManager';
 import { strokeCircle } from '../utils/util';
+import { IEntity }      from '../entities/IEntity';
 
-export interface IEntity {
-    cx: number;
-    cy: number;
-    entityType?: string;
-    spatialMapping?: [number, number, number][];
-    _isDeadNow: boolean;
-    getPos(): { posX: number; posY: number };
-    getRadius(): number;
-    getSpatialID(): number;
-    kill(): void;
-    takeBulletHit?(): void;
-    takeAlienbulletHit?(): void;
-}
 
 let _nextSpatialID = 1; // all valid IDs are non-falsy (don't start at 0)
 const _entities: IEntity[] = [];
@@ -55,25 +43,22 @@ export const spatialManager = {
     findEntityInRangeByType(
         posX: number, posY: number, radius: number,
         types: string[],
-        spatialMapping?: [number, number, number][]
-    ): IEntity | false {
+        callerMapping?: [number, number, number][]
+    ): IEntity | undefined {
         for (const e of _entities) {
-            if (!types) continue;
-            for (const t of types) {
-                if (e.entityType !== t) continue;
-                if (spatialMapping && checkSpatialMapping(posX, posY, radius, spatialMapping, e))
-                    return e;
-                else if (e.spatialMapping && checkSpatialMapping(posX, posY, radius, e.spatialMapping, e))
-                    return e;
-                else if (!spatialMapping) {
-                    const dx = e.getPos().posX - posX;
-                    const dy = e.getPos().posY - posY;
-                    const r  = e.getRadius() + radius;
-                    if (dx * dx + dy * dy <= r * r) return e;
-                }
+            if (!types.includes(e.entityType ?? '')) continue;
+            // Prefer the caller's shape, fall back to the entity's own shape, then plain circle
+            const mapping = callerMapping ?? e.spatialMapping;
+            if (mapping) {
+                if (checkSpatialMapping(posX, posY, radius, mapping, e)) return e;
+            } else {
+                const dx = e.getPos().posX - posX;
+                const dy = e.getPos().posY - posY;
+                const r  = e.getRadius() + radius;
+                if (dx * dx + dy * dy <= r * r) return e;
             }
         }
-        return false;
+        return undefined;
     },
 
     render(ctx: CanvasRenderingContext2D): void {

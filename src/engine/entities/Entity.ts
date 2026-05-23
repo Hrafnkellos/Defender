@@ -1,7 +1,8 @@
 // Entity — base class for all game entities.
 // Provides spatial registration, collision helpers, and position management.
 
-import { spatialManager, IEntity } from '../managers/spatialManager';
+import { IEntity }      from './IEntity';
+import { spatialManager } from '../managers/spatialManager';
 import { mapManager }              from '../managers/mapManager';
 import { wrapRange, getRandomInt } from '../utils/util';
 
@@ -54,7 +55,7 @@ export class Entity implements IEntity {
         return spatialManager.findEntityInRange(pos.posX, pos.posY, this.getRadius());
     }
 
-    findHitEntityType(types: string[], hasMapping?: boolean): IEntity | false {
+    findHitEntityType(types: string[], hasMapping?: boolean): IEntity | undefined {
         const pos = this.getPos();
         if (this.spatialMapping && hasMapping)
             return spatialManager.findEntityInRangeByType(
@@ -65,7 +66,7 @@ export class Entity implements IEntity {
         );
     }
 
-    isColliding(types?: string[]): IEntity | false {
+    isColliding(types?: string[]): IEntity | undefined {
         return this.findHitEntityType(types ?? []);
     }
 

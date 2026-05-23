@@ -1,16 +1,24 @@
 // Main game loop
 
-import { g_ctx }    from '../utils/config';
-import { eatKey }   from '../input/keys';
-import { mapManager } from '../managers/mapManager';
-import { update }   from './update';
-import { render }   from './render';
+import { g_canvas, g_ctx } from '../utils/config';
+import { eatKey }           from '../input/keys';
+import { mapManager }       from '../managers/mapManager';
+import { update }           from './update';
+import { render }           from './render';
+import { pauseMenu }        from './pauseMenu';
 
 export interface IGame {
     gatherInputs?(): void;
     updateSimulation(du: number): void;
     renderSimulation(ctx: CanvasRenderingContext2D): void;
+    reset?(): void;
+    getControls?(): string[];
+    onMusicToggle?(enabled: boolean): void;
+    onSfxToggle?(enabled: boolean): void;
 }
+
+const KEY_QUIT   = 'Q'.charCodeAt(0);
+const KEY_ESCAPE = 27;
 
 export const main = {
 
@@ -20,8 +28,8 @@ export const main = {
     _doTimerShow:       false,
     _game:              null as IGame | null,
     paused:             false,
-
-    KEY_QUIT: 'Q'.charCodeAt(0),
+    musicEnabled:       true,
+    sfxEnabled:         true,
 
     registerGame(game: IGame): void {
         this._game = game;
@@ -41,8 +49,23 @@ export const main = {
     },
 
     _iterCore(dt: number): void {
-        if (eatKey(this.KEY_QUIT)) { this.gameOver(); return; }
-        if (this._game && this._game.gatherInputs) this._game.gatherInputs();
+        if (eatKey(KEY_QUIT)) { this.gameOver(); return; }
+
+        if (this.paused) {
+            const stepFrame = pauseMenu.handleInput();
+            if (stepFrame && this._game) this._game.updateSimulation(1);
+            render.run(g_ctx);
+            return;
+        }
+
+        if (eatKey(KEY_ESCAPE)) {
+            this.paused = true;
+            pauseMenu.selectedIndex   = 0;
+            pauseMenu.showingControls = false;
+            return;
+        }
+
+        if (this._game?.gatherInputs) this._game.gatherInputs();
         update.run(dt);
         render.run(g_ctx);
     },
@@ -50,6 +73,14 @@ export const main = {
     gameOver(): void {
         this._isGameOver = true;
         console.log("gameOver: quitting...");
+    },
+
+    toggleFullscreen(): void {
+        if (!document.fullscreenElement) {
+            g_canvas.requestFullscreen().catch(err => console.warn('Fullscreen error:', err));
+        } else {
+            document.exitFullscreen();
+        }
     },
 
     _requestNextIteration(): void {
@@ -71,7 +102,39 @@ export const main = {
 
     init(): void {
         g_ctx.fillStyle = "white";
+        document.addEventListener('fullscreenchange', _onFullscreenChange);
         this._requestNextIteration();
     }
 
 };
+
+function _onFullscreenChange(): void {
+    if (document.fullscreenElement === g_canvas) {
+        const aspect = g_canvas.width / g_canvas.height;
+        const wW = window.innerWidth;
+        const wH = window.innerHeight;
+        let cssW: number, cssH: number;
+        if (wW / wH > aspect) {
+            cssH = wH;
+            cssW = wH * aspect;
+        } else {
+            cssW = wW;
+            cssH = wW / aspect;
+        }
+        g_canvas.style.width      = cssW + 'px';
+        g_canvas.style.height     = cssH + 'px';
+        g_canvas.style.position   = 'fixed';
+        g_canvas.style.top        = '50%';
+        g_canvas.style.left       = '50%';
+        g_canvas.style.transform  = 'translate(-50%, -50%)';
+        g_canvas.style.background = 'black';
+    } else {
+        g_canvas.style.width     = '';
+        g_canvas.style.height    = '';
+        g_canvas.style.position  = '';
+        g_canvas.style.top       = '';
+        g_canvas.style.left      = '';
+        g_canvas.style.transform = '';
+        g_canvas.style.background = '';
+    }
+}

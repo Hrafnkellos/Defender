@@ -2,8 +2,16 @@ import { BufferLoader } from '../utils/BufferLoader';
 
 export class SoundManager {
     buffers: AudioBuffer[] = [];
+    sfxEnabled   = true;
+    private _musicEnabled = true;
     private context: AudioContext;
     private source: AudioBufferSourceNode | null = null;
+
+    get musicEnabled(): boolean { return this._musicEnabled; }
+    set musicEnabled(val: boolean) {
+        this._musicEnabled = val;
+        if (!val) this.stopSound();
+    }
 
     constructor(ctx: AudioContext) {
         this.context = ctx;
@@ -40,6 +48,8 @@ export class SoundManager {
     }
 
     playSound(type: number, rounds: number, interval: number, loop = false, random = 0): void {
+        if (type === 12 && !this._musicEnabled) return;
+        if (type !== 12 && !this.sfxEnabled)    return;
         try {
             const time = this.context.currentTime;
             for (let i = 0; i < rounds; i++) {
@@ -47,7 +57,11 @@ export class SoundManager {
                 if (loop) source.loop = true;
                 source.playbackRate.value = 1 + Math.random();
                 source.start(time + i * interval + Math.random() * random);
-                if (type === 12) this.source = source;
+                if (type === 12) {
+                    // Stop any existing looping source before replacing the reference
+                    try { this.source?.stop(0); } catch (_) { /* already stopped */ }
+                    this.source = source;
+                }
             }
         } catch (err) {
             console.dir(err);

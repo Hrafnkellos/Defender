@@ -3,7 +3,9 @@
 import { entityManager as engineEntityManager } from '../../engine/managers/entityManager';
 import { mapManager }      from '../../engine/managers/mapManager';
 import { eatKey, keyCode } from '../../engine/input/keys';
+import '../../engine/input/mouse'; // registers mouse event listeners as a side effect
 import { main }            from '../../engine/core/main';
+import { render as engineRender } from '../../engine/core/render';
 import { spatialManager }  from '../../engine/managers/spatialManager';
 import { imagesPreload }   from '../../engine/utils/imagesPreload';
 import { SoundManager }    from '../../engine/managers/soundManager';
@@ -68,11 +70,47 @@ const game = {
 
         mapManager.landscapeRender(ctx);
         engineEntityManager.render(ctx);
-        mapManager.miniMapRender(ctx);
+        mapManager.miniMapRender(ctx, engineRender.panelView);
         gameManager.renderGameInfo(ctx);
 
         if (g_renderSpatialDebug) spatialManager.render(ctx);
-    }
+    },
+
+    reset(): void {
+        gameManager.resetGame();
+        if (g_songIsOn) {
+            sound?.stopSound();
+            sound?.playSound(12, 1, 0.1, true, 0);
+        }
+    },
+
+    getControls(): string[] {
+        return [
+            'Arrow Up / W     Move Up',
+            'Arrow Down / S   Move Down',
+            'Arrow Left / A   Move Left',
+            'Arrow Right / D  Move Right',
+            'Space            Fire',
+            'Ctrl / Tab       Bomb',
+            'Shift / E        Hyperspace (warp)',
+            'M                Toggle Music',
+            'Escape           Pause Menu',
+        ];
+    },
+
+    onMusicToggle(enabled: boolean): void {
+        if (!sound) return;
+        sound.musicEnabled = enabled;
+        if (enabled && g_songIsOn) {
+            sound.playSound(12, 1, 0.1, true, 0);
+        } else if (!enabled) {
+            g_songIsOn = false;
+        }
+    },
+
+    onSfxToggle(enabled: boolean): void {
+        if (sound) sound.sfxEnabled = enabled;
+    },
 
 };
 

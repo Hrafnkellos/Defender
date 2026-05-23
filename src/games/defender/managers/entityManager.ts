@@ -156,7 +156,7 @@ export const entityManager = {
             this._particles, this._bullets, this._lazers, this._ships,
             this._humans, this._alienbullets, this._landers, this._baiters,
             this._motherships, this._swarmers
-        ] as Array<Array<import('../../../engine/managers/spatialManager').IEntity>>;
+        ] as Array<Array<import('../../../engine/entities/IEntity').IEntity>>;
         for (const cat of all) {
             while (cat.length > 0) {
                 spatialManager.unregister(cat[0]);

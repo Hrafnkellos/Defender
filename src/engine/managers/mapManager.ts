@@ -2,7 +2,6 @@
 
 import { g_canvas }       from '../utils/config';
 import { drawLine, wrapRange, fillCircle } from '../utils/util';
-import { render as engineRender } from '../core/render';
 
 // Game can set these callbacks during initialization to supply game-specific data.
 let _shipPosFn:         (() => { posX: number; posY: number }) | null = null;
@@ -37,8 +36,8 @@ export const mapManager = {
         return mapY * (minimap.half_height * 2) / g_canvas.height;
     },
 
-    miniMapRender(ctx: CanvasRenderingContext2D): void {
-        if (engineRender.panelView) {
+    miniMapRender(ctx: CanvasRenderingContext2D, panelView = false): void {
+        if (panelView) {
             this.debugMapRender(ctx);
             return;
         }

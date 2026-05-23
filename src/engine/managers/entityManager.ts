@@ -3,7 +3,7 @@
 // The engine handles the update/render loop generically.
 
 import { mapManager } from './mapManager';
-import { IEntity }    from './spatialManager';
+import { IEntity }    from '../entities/IEntity';
 
 export const KILL_ME_NOW = -1 as const;
 
@@ -28,18 +28,10 @@ export const entityManager = {
     render(ctx: CanvasRenderingContext2D): void {
         for (const cat of this._categories) {
             for (const entity of cat) {
-                (entity as IEntity & { render(ctx: CanvasRenderingContext2D): void }).render(ctx);
+                entity.render(ctx);
                 mapManager.renderToMinimap(entity, ctx);
             }
         }
     }
 
 };
-
-// Augment IEntity with update/render (needed by entityManager.update/render)
-declare module './spatialManager' {
-    interface IEntity {
-        update(du: number): number | void;
-        render(ctx: CanvasRenderingContext2D): void;
-    }
-}

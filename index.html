@@ -8,32 +8,27 @@
     body {
         width: 900px;
         margin: 0 auto;
+        background: #111;
+        color: #ccc;
+        font-family: Georgia, serif;
     }
     canvas {
         margin: 40px 0 0 0;
+        display: block;
+    }
+    canvas:-webkit-full-screen {
+        background: black;
+    }
+    canvas:fullscreen {
+        background: black;
     }
   </style>
   <body>
 
-    <canvas id="myCanvas" width="900" height="500" style="border: 1px solid black;">
+    <canvas id="myCanvas" width="900" height="500" style="border: 1px solid #444;">
     Sorry, but your browser does not support the HTML5 canvas tag.
     </canvas><br>
-    <h2>Controls</h2>
-    <p>Up: arrow up or W</p>
-    <p>Down: down arrow or S</p>
-    <p>Left: left arrow or A</p>
-    <p>Right: right arrow or D</p>
-    <p>Fire: Space</p>
-    <p>Bomb: Ctrl or Tab</p>
-    <p>Hyperspace: Shift or E</p>
-    <h2>Utilities</h2>
-    <p>Toggle Music: M</p>
-    <p>Pause: P</p>
-    <p>Step one frame (while paused): O</p>
-    <p>Toggle spatial debug: X</p>
-    <p>Halt ship: H</p>
-    <p>Switch camera mode: L</p>
-    <p>Quit: Q</p>
+    <p style="color:#666; font-size:13px; margin:6px 0 20px;">Press <strong>Escape</strong> to pause — pause menu has controls, music, sound and fullscreen.</p>
 
     <div id="output"></div>
 

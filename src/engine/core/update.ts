@@ -1,11 +1,7 @@
 // Generic update logic
 
-import { eatKey, keyCode }        from '../input/keys';
 import { NOMINAL_UPDATE_INTERVAL } from '../utils/config';
 import { main }                    from './main';
-
-const KEY_PAUSE = keyCode('P');
-const KEY_STEP  = keyCode('O');
 
 export const update = {
 
@@ -14,7 +10,7 @@ export const update = {
     _isOdd:  false,
 
     run(dt: number): void {
-        if (this._shouldSkip()) return;
+        if (main.paused) return;
 
         const original_dt = dt;
         if (dt > 200) {
@@ -29,10 +25,5 @@ export const update = {
         this._prevDu = du;
         this._isOdd  = !this._isOdd;
     },
-
-    _shouldSkip(): boolean {
-        if (eatKey(KEY_PAUSE)) main.paused = !main.paused;
-        return main.paused && !eatKey(KEY_STEP);
-    }
 
 };
