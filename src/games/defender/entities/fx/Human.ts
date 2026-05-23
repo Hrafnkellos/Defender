@@ -1,7 +1,9 @@
 import { Entity }         from '../../../../engine/entities/Entity';
 import { camera }     from '../../../../engine/managers/camera';
+import { drawWrappedSprite } from '../../utils/draw';
 import { g_canvas }       from '../../../../engine/utils/config';
-import { getRandomInt, randRange, moveAround } from '../../../../engine/utils/util';
+import { getRandomInt, randRange } from '../../../../engine/utils/util';
+import { moveAround, wrapX } from '../../utils/ai';
 import { sprites }        from '../../sprites';
 import { gameManager }    from '../../managers/gameManager';
 
@@ -74,13 +76,13 @@ export class Human extends Entity {
 
         this.cx += this.velX * du;
         this.cy += this.velY * du;
-        this.wrapPosition();
+        this.cx = wrapX(this.cx);
     }
 
     render(ctx: CanvasRenderingContext2D): void {
         const sprite = sprites.human;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        drawWrappedSprite(sprite, ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

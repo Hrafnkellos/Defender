@@ -1,5 +1,7 @@
 import { Enemy }          from '../Enemy';
 import { camera }     from '../../../../engine/managers/camera';
+import { drawWrappedSprite } from '../../utils/draw';
+import { wrapX }          from '../../utils/ai';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { sprites }        from '../../sprites';
 import { sound }          from '../../sound';
@@ -65,7 +67,7 @@ export class Swarmer extends Enemy {
             this.cy  += this.velY * du;
         }
 
-        this.wrapPosition();
+        this.cx = wrapX(this.cx);
     }
 
     takeBulletHit(): void {
@@ -77,6 +79,6 @@ export class Swarmer extends Enemy {
         const sprite = sprites.defender3;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        drawWrappedSprite(sprite, ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

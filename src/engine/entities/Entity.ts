@@ -3,8 +3,7 @@
 
 import { IEntity }      from './IEntity';
 import { spatialManager } from '../managers/spatialManager';
-import { camera }                  from '../managers/camera';
-import { wrapRange, getRandomInt } from '../utils/util';
+import { getRandomInt } from '../utils/util';
 
 export class Entity implements IEntity {
     cx:           number = 0;
@@ -65,10 +64,6 @@ export class Entity implements IEntity {
 
     isColliding(types?: string[]): IEntity | undefined {
         return this.findHitEntityType(types ?? []);
-    }
-
-    wrapPosition(): void {
-        this.cx = wrapRange(this.cx, 0, camera.rightX);
     }
 
     // To be implemented by subclasses

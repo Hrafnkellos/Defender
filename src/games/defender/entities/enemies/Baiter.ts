@@ -1,6 +1,8 @@
 import { Enemy }          from '../Enemy';
 import { camera }     from '../../../../engine/managers/camera';
-import { randRange, moveAround } from '../../../../engine/utils/util';
+import { drawWrappedSprite } from '../../utils/draw';
+import { randRange }      from '../../../../engine/utils/util';
+import { moveAround, wrapX } from '../../utils/ai';
 import { sprites }        from '../../sprites';
 import { sound }          from '../../sound';
 import { entityManager as defEntityManager } from '../../managers/entityManager';
@@ -63,7 +65,7 @@ export class Baiter extends Enemy {
 
         this.cx += this.velX * du;
         this.cy += this.velY * du;
-        this.wrapPosition();
+        this.cx = wrapX(this.cx);
     }
 
     takeBulletHit(): void {
@@ -75,6 +77,6 @@ export class Baiter extends Enemy {
         const sprite = sprites.creep1;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        drawWrappedSprite(sprite, ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

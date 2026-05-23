@@ -1,7 +1,9 @@
 import { Entity }           from '../../../../engine/entities/Entity';
 import { camera }       from '../../../../engine/managers/camera';
 import { NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
-import { wrapRange, drawWrappedLine, wrappedCenteredFillBox } from '../../../../engine/utils/util';
+import { wrapRange }    from '../../../../engine/utils/util';
+import { drawWrappedLine, wrappedCenteredFillBox } from '../../utils/draw';
+import { wrapX }            from '../../utils/ai';
 import { consts }           from '../../../../engine/utils/config';
 import { sound }            from '../../sound';
 import { IDefenderEntity }  from '../IDefenderEntity';
@@ -41,7 +43,7 @@ export class Laser extends Entity {
             return;
         }
 
-        this.wrapPosition();
+        this.cx = wrapX(this.cx);
         this.randomFillstyle();
     }
 

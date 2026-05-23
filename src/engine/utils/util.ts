@@ -1,7 +1,5 @@
 // util.ts — engine utility functions. No game-specific dependencies.
 
-import { camera } from '../managers/camera';
-
 // ─── RANGES ──────────────────────────────────────────────────────────────────
 
 export function clampRange(value: number, lowBound: number, highBound: number): number {
@@ -57,49 +55,6 @@ export function wrappedDistSq(x1: number, y1: number, x2: number, y2: number, xW
     return square(dx) + square(dy);
 }
 
-// ─── AI ──────────────────────────────────────────────────────────────────────
-
-interface EntityForMove {
-    baseVel: number;
-    hasHuman?: { isAbducted: boolean; abduct(e: EntityForMove): void } | false | undefined;
-    getPos(): { posX: number; posY: number };
-}
-
-export function moveAround(
-    travelPoint: { posX: number; posY: number },
-    entity:      EntityForMove,
-    top:         number,
-    bottom:      number,
-    margin:      number,
-    position?:   { posX: number; posY: number }
-): { velX: number; velY: number; travelPoint: { posX: number; posY: number } } {
-    const pos     = position || entity.getPos();
-    const xApprox = isBetween(pos.posX, travelPoint.posX - margin, travelPoint.posX + margin);
-    const yApprox = isBetween(pos.posY, travelPoint.posY - margin, travelPoint.posY + margin);
-    const result  = { velX: entity.baseVel, velY: entity.baseVel, travelPoint };
-
-    if (xApprox && yApprox) {
-        result.travelPoint = randPoint(0, camera.rightX, top, bottom);
-
-        if (entity.hasHuman) {
-            if (!entity.hasHuman.isAbducted) entity.hasHuman.abduct(entity);
-            else entity.hasHuman = false;
-            result.travelPoint = randPoint(0, camera.rightX, top, top);
-        }
-    } else {
-        if (pos.posX < travelPoint.posX) result.velX =  result.velX;
-        else                             result.velX = -result.velX;
-
-        if (!yApprox) {
-            if (pos.posY < travelPoint.posY) result.velY =  result.velY;
-            else                             result.velY = -result.velY;
-        } else {
-            result.velY = 0;
-        }
-    }
-    return result;
-}
-
 // ─── CANVAS OPS ───────────────────────────────────────────────────────────────
 
 export function clearCanvas(ctx: CanvasRenderingContext2D): void {
@@ -122,12 +77,6 @@ export function strokeCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: n
     ctx.strokeStyle = old;
 }
 
-export function wrappedStrokeCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, style: string): void {
-    strokeCircleStyle(ctx, x,                           y, r, style);
-    strokeCircleStyle(ctx, x - camera.rightX, y, r, style);
-    strokeCircleStyle(ctx, x + camera.rightX, y, r, style);
-}
-
 export function fillCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void {
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -139,12 +88,6 @@ export function fillCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: num
     ctx.fillStyle = style;
     fillCircle(ctx, x, y, r);
     ctx.fillStyle = old;
-}
-
-export function wrappedFillCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, style: string): void {
-    fillCircleStyle(ctx, x,                           y, r, style);
-    fillCircleStyle(ctx, x - camera.rightX, y, r, style);
-    fillCircleStyle(ctx, x + camera.rightX, y, r, style);
 }
 
 export function fillBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, style: string): void {
@@ -165,19 +108,6 @@ export function drawLine(ctx: CanvasRenderingContext2D, sx: number, sy: number, 
     ctx.strokeStyle = old;
 }
 
-export function drawWrappedLine(ctx: CanvasRenderingContext2D, sx: number, sy: number, ex: number, ey: number, style: string): void {
-    const mm = camera;
-    if (sx > 3500 && ex < 1000) {
-        drawLine(ctx, sx - mm.screenLeft - mm.rightX, sy, ex - mm.screenLeft,            ey, style);
-        drawLine(ctx, sx - mm.screenLeft,             sy, ex - mm.screenLeft + mm.rightX, ey, style);
-    } else if (sx < 500 && ex > 3000) {
-        drawLine(ctx, sx - mm.screenLeft + mm.rightX, sy, ex - mm.screenLeft,            ey, style);
-        drawLine(ctx, sx - mm.screenLeft,             sy, ex - mm.screenLeft - mm.rightX, ey, style);
-    } else {
-        drawLine(ctx, sx - mm.screenLeft, sy, ex - mm.screenLeft, ey, style);
-    }
-}
-
 export function centeredStrokeBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, style: string): void {
     const old = ctx.strokeStyle;
     ctx.strokeStyle = style;
@@ -190,12 +120,6 @@ export function centeredFillBox(ctx: CanvasRenderingContext2D, x: number, y: num
     ctx.fillStyle = style;
     ctx.fillRect(x - w / 2, y - h / 2, w, h);
     ctx.fillStyle = old;
-}
-
-export function wrappedCenteredFillBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, style: string): void {
-    centeredFillBox(ctx, x,                           y, w, h, style);
-    centeredFillBox(ctx, x - camera.rightX, y, w, h, style);
-    centeredFillBox(ctx, x + camera.rightX, y, w, h, style);
 }
 
 export function writeText(ctx: CanvasRenderingContext2D, font: string, style: string, text: string, x: number, y: number): void {

@@ -16,6 +16,7 @@ import { sprites }          from './sprites';
 import { entityManager }    from './managers/entityManager';
 import { mapManager }       from './managers/mapManager';
 import { gameManager }      from './managers/gameManager';
+import { drawWrappedSprite } from './utils/draw';
 
 // ─── DIAGNOSTICS FLAGS ────────────────────────────────────────────────────────
 
@@ -147,12 +148,12 @@ function preloadDone(): void {
     sprites.landscape = new Sprite(g_images.landscape);
     sprites.life      = new Sprite({ image: g_images.defender,  celWidth: 512, celHeight: 512, Cols: 4, Rows: 2, Cels: 7  });
 
-    // Wire up game-specific callbacks for the engine's mapManager
+    // Wire up game-specific callbacks for Defender's mapManager
     mapManager.setShipPosFn(() => entityManager.getShipPos());
     mapManager.setLandscapeRenderFn((ctx) => {
         const landscape = sprites.landscape!;
         const spritePos = landscape.width - camera.screenRight;
-        landscape.drawWrappedCentredAt(ctx, spritePos, 400);
+        drawWrappedSprite(landscape, ctx, spritePos, 400);
     });
 
     entityManager.registerWithEngine();

@@ -1,7 +1,9 @@
 import { Entity }           from '../../../../engine/entities/Entity';
 import { camera }       from '../../../../engine/managers/camera';
 import { NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
-import { wrapRange, wrappedCenteredFillBox } from '../../../../engine/utils/util';
+import { wrapRange }    from '../../../../engine/utils/util';
+import { wrappedCenteredFillBox } from '../../utils/draw';
+import { wrapX }            from '../../utils/ai';
 import { consts }           from '../../../../engine/utils/config';
 
 export class AlienBullet extends Entity {
@@ -22,7 +24,7 @@ export class AlienBullet extends Entity {
 
         this.cx += this.velX * du;
         this.cy += this.velY * du;
-        this.wrapPosition();
+        this.cx = wrapX(this.cx);
         this.rotation = wrapRange(this.rotation + du, 0, consts.FULL_CIRCLE);
     }
 

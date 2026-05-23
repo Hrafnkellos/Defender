@@ -2,7 +2,9 @@ import { Entity }         from '../../../../engine/entities/Entity';
 import { camera }     from '../../../../engine/managers/camera';
 import { g_canvas, SECS_TO_NOMINALS, consts } from '../../../../engine/utils/config';
 import { keys, eatKey }   from '../../../../engine/input/keys';
-import { isBetween, wrappedFillCircleStyle, wrappedStrokeCircleStyle } from '../../../../engine/utils/util';
+import { isBetween }      from '../../../../engine/utils/util';
+import { drawWrappedSprite, wrappedFillCircleStyle, wrappedStrokeCircleStyle } from '../../utils/draw';
+import { wrapX }          from '../../utils/ai';
 import { sprites }        from '../../sprites';
 import { sound }          from '../../sound';
 import { entityManager as defEntityManager } from '../../managers/entityManager';
@@ -99,7 +101,7 @@ export class Ship extends Entity {
 
         this.maybeFireBullet();
         this.maybeDropBomb();
-        this.wrapPosition();
+        this.cx = wrapX(this.cx);
 
         if (eatKey(Ship.CAMERA_MODE)) this.cameraMode = !this.cameraMode;
 
@@ -259,7 +261,7 @@ export class Ship extends Entity {
         const sprite = sprites.defender;
         if (!sprite) return;
         sprite.scale = this._scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, this.rotation - 1.555, this.flipp);
+        drawWrappedSprite(sprite, ctx, this.cx - camera.screenLeft, this.cy, this.rotation - 1.555, this.flipp);
         if (this.forcefield) {
             wrappedFillCircleStyle(ctx, this.cx - camera.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,0.1)");
             wrappedStrokeCircleStyle(ctx, this.cx - camera.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,1)");

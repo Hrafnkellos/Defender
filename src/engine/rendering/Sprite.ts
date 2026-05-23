@@ -1,5 +1,3 @@
-import { camera } from '../managers/camera';
-
 interface SpriteDescr {
     image:     HTMLImageElement;
     celWidth:  number;
@@ -99,9 +97,4 @@ export class Sprite {
         }
     }
 
-    drawWrappedCentredAt(ctx: CanvasRenderingContext2D, cx: number, cy: number, rotation?: number, flipp?: number): void {
-        this.drawCentredAt(ctx, cx,                           cy, rotation, flipp);
-        this.drawCentredAt(ctx, cx - camera.rightX, cy, rotation, flipp);
-        this.drawCentredAt(ctx, cx + camera.rightX, cy, rotation, flipp);
-    }
 }

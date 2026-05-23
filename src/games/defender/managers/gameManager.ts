@@ -1,6 +1,7 @@
 import { NOMINAL_UPDATE_INTERVAL } from '../../../engine/utils/config';
 import { main }             from '../../../engine/core/main';
-import { centeredStrokeBox, wrappedCenteredFillBox, writeText } from '../../../engine/utils/util';
+import { centeredStrokeBox, writeText } from '../../../engine/utils/util';
+import { wrappedCenteredFillBox } from '../utils/draw';
 import { entityManager }    from './entityManager';
 import { sprites }          from '../sprites';
 

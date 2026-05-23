@@ -1,8 +1,10 @@
 import { Enemy }          from '../Enemy';
 import { spatialManager } from '../../../../engine/managers/spatialManager';
 import { camera }     from '../../../../engine/managers/camera';
+import { drawWrappedSprite } from '../../utils/draw';
 import { g_canvas }       from '../../../../engine/utils/config';
-import { randRange, randPoint, moveAround } from '../../../../engine/utils/util';
+import { randRange, randPoint } from '../../../../engine/utils/util';
+import { moveAround, wrapX } from '../../utils/ai';
 import { sprites }        from '../../sprites';
 import { sound }          from '../../sound';
 import { entityManager as defEntityManager } from '../../managers/entityManager';
@@ -77,7 +79,7 @@ export class Lander extends Enemy {
 
         this.cx += this.velX * du;
         this.cy += this.velY * du;
-        this.wrapPosition();
+        this.cx = wrapX(this.cx);
     }
 
     mutate(): void {
@@ -103,6 +105,6 @@ export class Lander extends Enemy {
         const sprite = this.mutated ? sprites.mutant : sprites.lander;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        drawWrappedSprite(sprite, ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

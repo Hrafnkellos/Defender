@@ -1,7 +1,8 @@
 import { Entity }           from '../../../../engine/entities/Entity';
 import { camera }       from '../../../../engine/managers/camera';
 import { g_canvas, NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
-import { getRandomInt, wrappedCenteredFillBox } from '../../../../engine/utils/util';
+import { getRandomInt } from '../../../../engine/utils/util';
+import { wrappedCenteredFillBox } from '../../utils/draw';
 import { Vector }           from '../../../../engine/rendering/Vector';
 
 const PARTICLE_SIZE = 4;
