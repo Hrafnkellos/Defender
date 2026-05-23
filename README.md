@@ -1,5 +1,7 @@
 # DEFENDER!
 
+**[Play it here](https://hrafnkellos.github.io/Defender/)**
+
 A browser-based clone of the classic 1981 Williams Electronics arcade game, written in TypeScript with a custom 2D game engine and Vite as the build tool.
 
 ## Getting started
