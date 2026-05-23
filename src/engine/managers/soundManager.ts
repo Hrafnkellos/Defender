@@ -13,23 +13,9 @@ export class SoundManager {
         if (!val) this.stopSound();
     }
 
-    constructor(ctx: AudioContext) {
+    constructor(ctx: AudioContext, urls: string[]) {
         this.context = ctx;
-        const loader = new BufferLoader(ctx, [
-            'assets/sounds/bulletFire.ogg',    // 0
-            'assets/sounds/bulletZapped.ogg',  // 1
-            'assets/sounds/rockEvaporate.ogg', // 2
-            'assets/sounds/rockSplit.ogg',     // 3
-            'assets/sounds/shipWarp.ogg',      // 4
-            'assets/sounds/death1.ogg',        // 5
-            'assets/sounds/death2.ogg',        // 6
-            'assets/sounds/expl1.ogg',         // 7
-            'assets/sounds/expl2.ogg',         // 8
-            'assets/sounds/lazer1.ogg',        // 9
-            'assets/sounds/lazer2.ogg',        // 10
-            'assets/sounds/lazer3.ogg',        // 11
-            'assets/sounds/Term2Theme.mp3',    // 12
-        ], (buffers) => {
+        const loader = new BufferLoader(ctx, urls, (buffers) => {
             this.buffers = buffers;
         });
         loader.load();

@@ -119,17 +119,18 @@ const game = {
 const g_images: Record<string, HTMLImageElement> = {};
 
 function requestPreloads(): void {
+    const base = import.meta.env.BASE_URL;
     const requiredImages: Record<string, string> = {
-        baiter   : "assets/images/baiter_small.png",
-        human    : "assets/images/human_bob_small.png",
-        defender : "assets/images/ship.png",
-        defender2: "assets/images/mothership_small.png",
-        defender3: "assets/images/swarmer_small.png",
-        lander   : "assets/images/lander_small.png",
-        mutant   : "assets/images/mutant_small.png",
-        life     : "assets/images/ship.png",
-        landscape: "assets/images/landscape.png",
-        creep    : "assets/images/creep1.png",
+        baiter   : base + "assets/images/baiter_small.png",
+        human    : base + "assets/images/human_bob_small.png",
+        defender : base + "assets/images/ship.png",
+        defender2: base + "assets/images/mothership_small.png",
+        defender3: base + "assets/images/swarmer_small.png",
+        lander   : base + "assets/images/lander_small.png",
+        mutant   : base + "assets/images/mutant_small.png",
+        life     : base + "assets/images/ship.png",
+        landscape: base + "assets/images/landscape.png",
+        creep    : base + "assets/images/creep1.png",
     };
     imagesPreload(requiredImages, g_images, preloadDone);
 }
@@ -165,8 +166,23 @@ function preloadDone(): void {
 
 function preloadSound(): void {
     try {
+        const base    = import.meta.env.BASE_URL;
         const context = new AudioContext();
-        initSound(new SoundManager(context));
+        initSound(new SoundManager(context, [
+            base + 'assets/sounds/bulletFire.ogg',    // 0
+            base + 'assets/sounds/bulletZapped.ogg',  // 1
+            base + 'assets/sounds/rockEvaporate.ogg', // 2
+            base + 'assets/sounds/rockSplit.ogg',     // 3
+            base + 'assets/sounds/shipWarp.ogg',      // 4
+            base + 'assets/sounds/death1.ogg',        // 5
+            base + 'assets/sounds/death2.ogg',        // 6
+            base + 'assets/sounds/expl1.ogg',         // 7
+            base + 'assets/sounds/expl2.ogg',         // 8
+            base + 'assets/sounds/lazer1.ogg',        // 9
+            base + 'assets/sounds/lazer2.ogg',        // 10
+            base + 'assets/sounds/lazer3.ogg',        // 11
+            base + 'assets/sounds/Term2Theme.mp3',    // 12
+        ]));
     } catch (e) {
         console.log(e, 'Web Audio API is not supported in this browser');
     }
