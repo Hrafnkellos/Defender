@@ -1,25 +1,16 @@
-// mapManager — world/screen coordinate translation, wrapping, landscape and minimap rendering.
+// Defender mapManager — minimap rendering, landscape rendering, and the
+// ship-position / landscape-render callbacks the game wires up at boot.
+// World/screen coordinates live in engine/camera; this module is purely
+// game-specific overlay logic.
 
-import { g_canvas }                        from '../utils/config';
-import { drawLine, wrapRange, fillCircle } from '../utils/util';
+import { g_canvas }                        from '../../../engine/utils/config';
+import { drawLine, wrapRange, fillCircle } from '../../../engine/utils/util';
+import { camera }                          from '../../../engine/managers/camera';
 
-// Game can set these callbacks during initialization to supply game-specific data.
 let _shipPosFn:         (() => { posX: number; posY: number }) | null = null;
 let _landscapeRenderFn: ((ctx: CanvasRenderingContext2D) => void) | null = null;
 
 export const mapManager = {
-
-    leftX:       0,
-    rightX:      4000,
-    screenLeft:  1550,
-    screenRight: 2450,
-
-    scrollToFollow(x: number): void {
-        const hw = g_canvas.width / 2;
-        x = wrapRange(x, 0, this.rightX);
-        this.screenLeft  = x - hw;
-        this.screenRight = x + hw;
-    },
 
     setShipPosFn(fn: () => { posX: number; posY: number }): void {
         _shipPosFn = fn;
@@ -30,13 +21,13 @@ export const mapManager = {
     },
 
     transposeToMinimap(mapX: number, mapY: number): { posX: number; posY: number } {
-        const posX = (minimap.cx - minimap.half_width) + mapX * (minimap.half_width * 2) / this.rightX;
+        const posX = (minimap.cx - minimap.half_width) + mapX * (minimap.half_width * 2) / camera.rightX;
         const posY = mapY * (minimap.half_height * 2) / g_canvas.height;
         return { posX, posY };
     },
 
     transposeXToMinimap(mapX: number): number {
-        return (minimap.cx - minimap.half_width) + mapX * (minimap.half_width * 2) / this.rightX;
+        return (minimap.cx - minimap.half_width) + mapX * (minimap.half_width * 2) / camera.rightX;
     },
 
     transposeYToMinimap(mapY: number): number {
@@ -58,8 +49,8 @@ export const mapManager = {
 
         const shipPos    = _shipPosFn ? _shipPosFn() : { posX: 2000, posY: 0 };
         const offset     = shipPos.posX - 2000;
-        const frameLeft  = this.transposeXToMinimap(this.screenLeft  - offset);
-        const frameRight = this.transposeXToMinimap(this.screenRight - offset);
+        const frameLeft  = this.transposeXToMinimap(camera.screenLeft  - offset);
+        const frameRight = this.transposeXToMinimap(camera.screenRight - offset);
         const lc         = "white";
 
         drawLine(ctx, frameLeft,  0,   frameLeft,  20,  lc);
@@ -107,10 +98,6 @@ export const mapManager = {
         else                              fillCircle(ctx, miniX, miniY, 2);
 
         ctx.fillStyle = old;
-    },
-
-    isOnScreen(cx: number): boolean {
-        return cx > this.screenLeft && cx < this.screenRight;
     },
 
     landscapeRender(ctx: CanvasRenderingContext2D): void {

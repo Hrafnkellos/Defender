@@ -1,6 +1,5 @@
 import { Entity }         from '../../../../engine/entities/Entity';
-import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { mapManager }     from '../../../../engine/managers/mapManager';
+import { camera }     from '../../../../engine/managers/camera';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { getRandomInt, randRange, moveAround } from '../../../../engine/utils/util';
 import { sprites }        from '../../sprites';
@@ -22,9 +21,9 @@ export class Human extends Entity {
         super();
         this.setup(descr ?? {});
         const sprite = sprites.human;
-        if (!this.cx) this.cx = getRandomInt(0, mapManager.rightX - this.getRadius() * 2);
+        if (!this.cx) this.cx = getRandomInt(0, camera.rightX - this.getRadius() * 2);
         if (!this.cy) this.cy = getRandomInt(g_canvas.height - 5, g_canvas.height) - this.getRadius();
-        this.travelPoint = { posX: randRange(0, mapManager.rightX - this.getRadius()), posY: this.cy };
+        this.travelPoint = { posX: randRange(0, camera.rightX - this.getRadius()), posY: this.cy };
         if (sprite) {
             const existingScale = (this as unknown as Record<string, unknown>).scale as number | undefined;
             if (existingScale !== undefined) this.scale = existingScale;
@@ -56,7 +55,6 @@ export class Human extends Entity {
 
     update(du: number): void {
         sprites.human?.animate();
-        spatialManager.unregister(this);
         if (this._isDeadNow) return;
 
         if (this.isAbducted && this.abductor) {
@@ -77,13 +75,12 @@ export class Human extends Entity {
         this.cx += this.velX * du;
         this.cy += this.velY * du;
         this.wrapPosition();
-        spatialManager.register(this);
     }
 
     render(ctx: CanvasRenderingContext2D): void {
         const sprite = sprites.human;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - mapManager.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

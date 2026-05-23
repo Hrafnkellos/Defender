@@ -1,6 +1,5 @@
 import { Entity }         from '../../../../engine/entities/Entity';
-import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { mapManager }     from '../../../../engine/managers/mapManager';
+import { camera }     from '../../../../engine/managers/camera';
 import { g_canvas, SECS_TO_NOMINALS, consts } from '../../../../engine/utils/config';
 import { keys, eatKey }   from '../../../../engine/input/keys';
 import { isBetween, wrappedFillCircleStyle, wrappedStrokeCircleStyle } from '../../../../engine/utils/util';
@@ -95,8 +94,6 @@ export class Ship extends Entity {
     update(du: number): void {
         if (this._isWarping) { this._updateWarp(du); return; }
 
-        spatialManager.unregister(this);
-
         const steps = this.numSubSteps, dStep = du / steps;
         for (let i = 0; i < steps; ++i) this.computeSubStep(dStep);
 
@@ -110,7 +107,7 @@ export class Ship extends Entity {
             this.cx += this.flipp ? -1000 : 1000;
 
         if (this.cameraMode) this.MainCamera(du);
-        else                 mapManager.scrollToFollow(this.cx);
+        else                 camera.scrollToFollow(this.cx);
 
         const types = ["lander", "human", "alienbullet", "baiter", "mothership", "swarmer"];
 
@@ -124,8 +121,6 @@ export class Ship extends Entity {
                            (hit as unknown as {isAirborne: boolean}).isAirborne && this.cy < 450) {
                     this.hasHuman = hit;
                     (hit as unknown as {abduct(s: Ship): void}).abduct(this);
-                } else {
-                    spatialManager.register(this);
                 }
             }
         } else {
@@ -138,8 +133,6 @@ export class Ship extends Entity {
                     this.hasHuman = hit;
                     (hit as unknown as {abduct(s: Ship): void}).abduct(this);
                 }
-            } else {
-                spatialManager.register(this);
             }
         }
 
@@ -153,13 +146,13 @@ export class Ship extends Entity {
         if (this.flipp) this.screenX -= this.screenSpeed * du;
         else            this.screenX += this.screenSpeed * du;
 
-        const mm = mapManager;
+        const mm = camera;
         if (this.screenX - this.cx >  mm.rightX) this.screenX = this.screenX - this.cx - mm.rightX - this.screenSpeed + 15;
         if (this.screenX - this.cx < -mm.rightX) this.screenX = this.screenX + 2 * mm.rightX - this.cx - this.screenSpeed;
         if (this.screenX - this.cx >  this.screenPadding) this.screenX = this.cx + this.screenPadding;
         else if (this.screenX - this.cx < -this.screenPadding) this.screenX = this.cx - this.screenPadding;
 
-        mapManager.scrollToFollow(this.screenX);
+        camera.scrollToFollow(this.screenX);
     }
 
     computeSubStep(du: number): void {
@@ -203,8 +196,8 @@ export class Ship extends Entity {
         const intervalVelX = aveVelX; // average velocity for smoother physics
 
         this.cx += du * intervalVelX;
-        mapManager.screenLeft  += du * intervalVelX;
-        mapManager.screenRight += du * intervalVelX;
+        camera.screenLeft  += du * intervalVelX;
+        camera.screenRight += du * intervalVelX;
     }
 
     maybeFireBullet(): void {
@@ -254,7 +247,7 @@ export class Ship extends Entity {
         this.forcefield = true;
         this.explode();
         this.halt();
-        mapManager.scrollToFollow(this.cx);
+        camera.scrollToFollow(this.cx);
     }
 
     halt(): void {
@@ -266,10 +259,10 @@ export class Ship extends Entity {
         const sprite = sprites.defender;
         if (!sprite) return;
         sprite.scale = this._scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - mapManager.screenLeft, this.cy, this.rotation - 1.555, this.flipp);
+        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, this.rotation - 1.555, this.flipp);
         if (this.forcefield) {
-            wrappedFillCircleStyle(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,0.1)");
-            wrappedStrokeCircleStyle(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,1)");
+            wrappedFillCircleStyle(ctx, this.cx - camera.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,0.1)");
+            wrappedStrokeCircleStyle(ctx, this.cx - camera.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,1)");
         }
     }
 
@@ -282,7 +275,6 @@ export class Ship extends Entity {
         } else if (this._scale > 1) {
             this._scale     = 1;
             this._isWarping = false;
-            spatialManager.register(this);
         }
     }
 }

@@ -3,7 +3,7 @@
 
 import { IEntity }      from './IEntity';
 import { spatialManager } from '../managers/spatialManager';
-import { mapManager }              from '../managers/mapManager';
+import { camera }                  from '../managers/camera';
 import { wrapRange, getRandomInt } from '../utils/util';
 
 export class Entity implements IEntity {
@@ -52,17 +52,14 @@ export class Entity implements IEntity {
 
     findHitEntity(): IEntity | undefined {
         const pos = this.getPos();
-        return spatialManager.findEntityInRange(pos.posX, pos.posY, this.getRadius());
+        return spatialManager.findEntityInRange(pos.posX, pos.posY, this.getRadius(), this._spatialID);
     }
 
     findHitEntityType(types: string[], hasMapping?: boolean): IEntity | undefined {
         const pos = this.getPos();
-        if (this.spatialMapping && hasMapping)
-            return spatialManager.findEntityInRangeByType(
-                pos.posX, pos.posY, this.getRadius(), types, this.spatialMapping
-            );
+        const mapping = (this.spatialMapping && hasMapping) ? this.spatialMapping : undefined;
         return spatialManager.findEntityInRangeByType(
-            pos.posX, pos.posY, this.getRadius(), types
+            pos.posX, pos.posY, this.getRadius(), types, mapping, this._spatialID
         );
     }
 
@@ -71,7 +68,7 @@ export class Entity implements IEntity {
     }
 
     wrapPosition(): void {
-        this.cx = wrapRange(this.cx, 0, mapManager.rightX);
+        this.cx = wrapRange(this.cx, 0, camera.rightX);
     }
 
     // To be implemented by subclasses

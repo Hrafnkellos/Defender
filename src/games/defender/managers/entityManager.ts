@@ -6,7 +6,7 @@ import { spatialManager } from '../../../engine/managers/spatialManager';
 import { g_canvas }       from '../../../engine/utils/config';
 import { getRandomInt, wrappedDistSq } from '../../../engine/utils/util';
 import { Vector }         from '../../../engine/rendering/Vector';
-import { mapManager }     from '../../../engine/managers/mapManager';
+import { camera }     from '../../../engine/managers/camera';
 
 // Entity class imports (circular dep — resolved at runtime since only used inside methods)
 import { Ship }       from '../entities/player/Ship';
@@ -146,7 +146,7 @@ export const entityManager = {
         const groups = [this._landers, this._baiters, this._motherships, this._swarmers] as Array<Array<{cx: number; takeBulletHit?(): void}>>;
         for (const group of groups) {
             for (const e of group) {
-                if (mapManager.isOnScreen(e.cx)) e.takeBulletHit?.();
+                if (camera.isOnScreen(e.cx)) e.takeBulletHit?.();
             }
         }
     },

@@ -1,6 +1,6 @@
 import { Enemy }          from '../Enemy';
 import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { mapManager }     from '../../../../engine/managers/mapManager';
+import { camera }     from '../../../../engine/managers/camera';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { randRange, randPoint, moveAround } from '../../../../engine/utils/util';
 import { sprites }        from '../../sprites';
@@ -23,9 +23,9 @@ export class Lander extends Enemy {
     constructor(descr?: Partial<Record<string, unknown>>) {
         super();
         this.setup(descr ?? {});
-        this.cx          = randRange(0, mapManager.rightX - this.getRadius());
+        this.cx          = randRange(0, camera.rightX - this.getRadius());
         this.cy          = randRange(100 + this.getRadius(), g_canvas.height);
-        this.travelPoint = randPoint(0, mapManager.rightX, 100 + this.getRadius(), g_canvas.height - this.getRadius());
+        this.travelPoint = randPoint(0, camera.rightX, 100 + this.getRadius(), g_canvas.height - this.getRadius());
         this.rateOfFire  = 1000;
         this.timeToFire  = this.rateOfFire * Math.random();
     }
@@ -40,7 +40,6 @@ export class Lander extends Enemy {
     update(du: number): void {
         const sprite = this.mutated ? sprites.mutant : sprites.lander;
         sprite?.animate();
-        spatialManager.unregister(this);
 
         if (this._isDeadNow) {
             this.death();
@@ -79,7 +78,6 @@ export class Lander extends Enemy {
         this.cx += this.velX * du;
         this.cy += this.velY * du;
         this.wrapPosition();
-        spatialManager.register(this);
     }
 
     mutate(): void {
@@ -105,6 +103,6 @@ export class Lander extends Enemy {
         const sprite = this.mutated ? sprites.mutant : sprites.lander;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - mapManager.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

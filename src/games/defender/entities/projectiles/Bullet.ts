@@ -1,6 +1,5 @@
 import { Entity }           from '../../../../engine/entities/Entity';
-import { spatialManager }   from '../../../../engine/managers/spatialManager';
-import { mapManager }       from '../../../../engine/managers/mapManager';
+import { camera }       from '../../../../engine/managers/camera';
 import { NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
 import { wrapRange }        from '../../../../engine/utils/util';
 import { consts }           from '../../../../engine/utils/config';
@@ -25,8 +24,6 @@ export class Bullet extends Entity {
     zappedSound(): void { sound?.playSound(1, 1, 0.1); }
 
     update(du: number): void {
-        spatialManager.unregister(this);
-
         this.lifeSpan -= du;
         if (this.lifeSpan < 0) { this.kill(); return; }
 
@@ -38,10 +35,7 @@ export class Bullet extends Entity {
         if (hit) {
             (hit as IDefenderEntity).takeBulletHit?.();
             this.kill();
-            return;
         }
-
-        spatialManager.register(this);
     }
 
     getRadius(): number { return 4; }
@@ -54,7 +48,7 @@ export class Bullet extends Entity {
     render(ctx: CanvasRenderingContext2D): void {
         const fadeThresh = (1500 / NOMINAL_UPDATE_INTERVAL) / 3;
         if (this.lifeSpan < fadeThresh) ctx.globalAlpha = this.lifeSpan / fadeThresh;
-        sprites.bullet?.drawCentredAt(ctx, this.cx - mapManager.screenLeft, this.cy, this.rotation);
+        sprites.bullet?.drawCentredAt(ctx, this.cx - camera.screenLeft, this.cy, this.rotation);
         ctx.globalAlpha = 1;
     }
 }

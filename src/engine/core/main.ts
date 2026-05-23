@@ -2,7 +2,7 @@
 
 import { g_canvas, g_ctx } from '../utils/config';
 import { eatKey }           from '../input/keys';
-import { mapManager }       from '../managers/mapManager';
+import { camera }           from '../managers/camera';
 import { update }           from './update';
 import { render }           from './render';
 import { pauseMenu }        from './pauseMenu';
@@ -88,8 +88,8 @@ export const main = {
         ctx.fillText('FT ' + this._frameTime_ms,        50, y + 10);
         ctx.fillText('FD ' + this._frameTimeDelta_ms,   50, y + 20);
         ctx.fillText('UU ' + update._prevDu,            50, y + 30);
-        ctx.fillText('MMGR left  ' + Math.floor(mapManager.screenLeft),  50, y + 50);
-        ctx.fillText('MMGR right ' + Math.floor(mapManager.screenRight), 50, y + 60);
+        ctx.fillText('CAM left  ' + Math.floor(camera.screenLeft),  50, y + 50);
+        ctx.fillText('CAM right ' + Math.floor(camera.screenRight), 50, y + 60);
     },
 
     init(): void {

@@ -1,6 +1,5 @@
 import { Enemy }          from '../Enemy';
-import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { mapManager }     from '../../../../engine/managers/mapManager';
+import { camera }     from '../../../../engine/managers/camera';
 import { randRange, moveAround } from '../../../../engine/utils/util';
 import { sprites }        from '../../sprites';
 import { sound }          from '../../sound';
@@ -38,7 +37,6 @@ export class Baiter extends Enemy {
 
     update(du: number): void {
         sprites.creep1?.animate();
-        spatialManager.unregister(this);
 
         if (this._isDeadNow) {
             this.death();
@@ -66,7 +64,6 @@ export class Baiter extends Enemy {
         this.cx += this.velX * du;
         this.cy += this.velY * du;
         this.wrapPosition();
-        spatialManager.register(this);
     }
 
     takeBulletHit(): void {
@@ -78,6 +75,6 @@ export class Baiter extends Enemy {
         const sprite = sprites.creep1;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - mapManager.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

@@ -1,7 +1,7 @@
 // Defender game entry point — wired up with Vite as module bundler.
 
 import { entityManager as engineEntityManager } from '../../engine/managers/entityManager';
-import { mapManager }      from '../../engine/managers/mapManager';
+import { camera }          from '../../engine/managers/camera';
 import { eatKey, keyCode } from '../../engine/input/keys';
 import '../../engine/input/mouse'; // registers mouse event listeners as a side effect
 import { main }            from '../../engine/core/main';
@@ -14,6 +14,7 @@ import { Sprite }          from '../../engine/rendering/Sprite';
 import { sound, initSound } from './sound';
 import { sprites }          from './sprites';
 import { entityManager }    from './managers/entityManager';
+import { mapManager }       from './managers/mapManager';
 import { gameManager }      from './managers/gameManager';
 
 // ─── DIAGNOSTICS FLAGS ────────────────────────────────────────────────────────
@@ -150,11 +151,12 @@ function preloadDone(): void {
     mapManager.setShipPosFn(() => entityManager.getShipPos());
     mapManager.setLandscapeRenderFn((ctx) => {
         const landscape = sprites.landscape!;
-        const spritePos = landscape.width - mapManager.screenRight;
+        const spritePos = landscape.width - camera.screenRight;
         landscape.drawWrappedCentredAt(ctx, spritePos, 400);
     });
 
     entityManager.registerWithEngine();
+    engineEntityManager.setAfterEntityRender((e, ctx) => mapManager.renderToMinimap(e, ctx));
     entityManager.init();
     entityManager.generateShip({ cx: 2000, cy: 300 });
 

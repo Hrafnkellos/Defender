@@ -1,5 +1,5 @@
 import { Entity }           from '../../../../engine/entities/Entity';
-import { mapManager }       from '../../../../engine/managers/mapManager';
+import { camera }       from '../../../../engine/managers/camera';
 import { g_canvas, NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
 import { getRandomInt, wrappedCenteredFillBox } from '../../../../engine/utils/util';
 import { Vector }           from '../../../../engine/rendering/Vector';
@@ -32,7 +32,7 @@ export class Particle extends Entity {
     }
 
     randomisePosition(): void {
-        const nx = this.cx || Math.random() * (mapManager.rightX + 500) - 250;
+        const nx = this.cx || Math.random() * (camera.rightX + 500) - 250;
         const ny = this.cy || Math.random() * (g_canvas.height - 200) + 100;
         this.position.x = nx;
         this.position.y = ny;
@@ -59,7 +59,7 @@ export class Particle extends Entity {
         const fadeThresh = (650 / NOMINAL_UPDATE_INTERVAL) / 3;
         if (this.lifeSpan < fadeThresh && this.fading) ctx.globalAlpha = this.lifeSpan / fadeThresh;
         const old = ctx.fillStyle;
-        wrappedCenteredFillBox(ctx, this.cx - mapManager.screenLeft, this.cy, PARTICLE_SIZE / 2, PARTICLE_SIZE / 2, this.fillStyle);
+        wrappedCenteredFillBox(ctx, this.cx - camera.screenLeft, this.cy, PARTICLE_SIZE / 2, PARTICLE_SIZE / 2, this.fillStyle);
         ctx.globalAlpha = 1;
         ctx.fillStyle   = old;
     }

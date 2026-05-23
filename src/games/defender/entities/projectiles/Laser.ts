@@ -1,6 +1,5 @@
 import { Entity }           from '../../../../engine/entities/Entity';
-import { spatialManager }   from '../../../../engine/managers/spatialManager';
-import { mapManager }       from '../../../../engine/managers/mapManager';
+import { camera }       from '../../../../engine/managers/camera';
 import { NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
 import { wrapRange, drawWrappedLine, wrappedCenteredFillBox } from '../../../../engine/utils/util';
 import { consts }           from '../../../../engine/utils/config';
@@ -28,8 +27,6 @@ export class Laser extends Entity {
     zappedSound(): void { sound?.playSound(1,  1, 0.1); }
 
     update(du: number): void {
-        spatialManager.unregister(this);
-
         this.lifeSpan -= du;
         if (this.lifeSpan < 0) { this.kill(); return; }
 
@@ -46,7 +43,6 @@ export class Laser extends Entity {
 
         this.wrapPosition();
         this.randomFillstyle();
-        spatialManager.register(this);
     }
 
     getRadius(): number { return 3; }
@@ -60,7 +56,7 @@ export class Laser extends Entity {
         const fadeThresh = (650 / NOMINAL_UPDATE_INTERVAL) / 3;
         if (this.lifeSpan < fadeThresh) ctx.globalAlpha = this.lifeSpan / fadeThresh;
         drawWrappedLine(ctx, this.scx, this.scy, this.cx, this.cy, this.eFillStyle);
-        wrappedCenteredFillBox(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), this.getRadius(), this.eFillStyle);
+        wrappedCenteredFillBox(ctx, this.cx - camera.screenLeft, this.cy, this.getRadius(), this.getRadius(), this.eFillStyle);
         ctx.globalAlpha = 1;
     }
 }

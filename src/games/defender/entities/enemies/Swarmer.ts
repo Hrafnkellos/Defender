@@ -1,6 +1,5 @@
 import { Enemy }          from '../Enemy';
-import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { mapManager }     from '../../../../engine/managers/mapManager';
+import { camera }     from '../../../../engine/managers/camera';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { sprites }        from '../../sprites';
 import { sound }          from '../../sound';
@@ -36,8 +35,6 @@ export class Swarmer extends Enemy {
     }
 
     update(du: number): void {
-        spatialManager.unregister(this);
-
         if (this._isDeadNow) {
             this.death();
             defEntityManager.generateParticleExplosion(this.cx, this.cy);
@@ -48,7 +45,7 @@ export class Swarmer extends Enemy {
         this.maybeFireBullet(du);
 
         const ship    = defEntityManager._ships[0];
-        const mm      = mapManager;
+        const mm      = camera;
         let   xTarget = ship.cx;
 
         if (this.cx > mm.rightX - mm.rightX / 4 && ship.cx < mm.rightX - mm.rightX * 3 / 4)
@@ -69,7 +66,6 @@ export class Swarmer extends Enemy {
         }
 
         this.wrapPosition();
-        spatialManager.register(this);
     }
 
     takeBulletHit(): void {
@@ -81,6 +77,6 @@ export class Swarmer extends Enemy {
         const sprite = sprites.defender3;
         if (!sprite) return;
         sprite.scale = this.scale;
-        sprite.drawWrappedCentredAt(ctx, this.cx - mapManager.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
+        sprite.drawWrappedCentredAt(ctx, this.cx - camera.screenLeft, this.cy, (this as unknown as {rotation?: number}).rotation);
     }
 }

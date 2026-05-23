@@ -1,6 +1,6 @@
 // util.ts — engine utility functions. No game-specific dependencies.
 
-import { mapManager } from '../managers/mapManager';
+import { camera } from '../managers/camera';
 
 // ─── RANGES ──────────────────────────────────────────────────────────────────
 
@@ -79,12 +79,12 @@ export function moveAround(
     const result  = { velX: entity.baseVel, velY: entity.baseVel, travelPoint };
 
     if (xApprox && yApprox) {
-        result.travelPoint = randPoint(0, mapManager.rightX, top, bottom);
+        result.travelPoint = randPoint(0, camera.rightX, top, bottom);
 
         if (entity.hasHuman) {
             if (!entity.hasHuman.isAbducted) entity.hasHuman.abduct(entity);
             else entity.hasHuman = false;
-            result.travelPoint = randPoint(0, mapManager.rightX, top, top);
+            result.travelPoint = randPoint(0, camera.rightX, top, top);
         }
     } else {
         if (pos.posX < travelPoint.posX) result.velX =  result.velX;
@@ -124,8 +124,8 @@ export function strokeCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: n
 
 export function wrappedStrokeCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, style: string): void {
     strokeCircleStyle(ctx, x,                           y, r, style);
-    strokeCircleStyle(ctx, x - mapManager.rightX, y, r, style);
-    strokeCircleStyle(ctx, x + mapManager.rightX, y, r, style);
+    strokeCircleStyle(ctx, x - camera.rightX, y, r, style);
+    strokeCircleStyle(ctx, x + camera.rightX, y, r, style);
 }
 
 export function fillCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void {
@@ -143,8 +143,8 @@ export function fillCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: num
 
 export function wrappedFillCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, style: string): void {
     fillCircleStyle(ctx, x,                           y, r, style);
-    fillCircleStyle(ctx, x - mapManager.rightX, y, r, style);
-    fillCircleStyle(ctx, x + mapManager.rightX, y, r, style);
+    fillCircleStyle(ctx, x - camera.rightX, y, r, style);
+    fillCircleStyle(ctx, x + camera.rightX, y, r, style);
 }
 
 export function fillBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, style: string): void {
@@ -166,7 +166,7 @@ export function drawLine(ctx: CanvasRenderingContext2D, sx: number, sy: number, 
 }
 
 export function drawWrappedLine(ctx: CanvasRenderingContext2D, sx: number, sy: number, ex: number, ey: number, style: string): void {
-    const mm = mapManager;
+    const mm = camera;
     if (sx > 3500 && ex < 1000) {
         drawLine(ctx, sx - mm.screenLeft - mm.rightX, sy, ex - mm.screenLeft,            ey, style);
         drawLine(ctx, sx - mm.screenLeft,             sy, ex - mm.screenLeft + mm.rightX, ey, style);
@@ -194,8 +194,8 @@ export function centeredFillBox(ctx: CanvasRenderingContext2D, x: number, y: num
 
 export function wrappedCenteredFillBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, style: string): void {
     centeredFillBox(ctx, x,                           y, w, h, style);
-    centeredFillBox(ctx, x - mapManager.rightX, y, w, h, style);
-    centeredFillBox(ctx, x + mapManager.rightX, y, w, h, style);
+    centeredFillBox(ctx, x - camera.rightX, y, w, h, style);
+    centeredFillBox(ctx, x + camera.rightX, y, w, h, style);
 }
 
 export function writeText(ctx: CanvasRenderingContext2D, font: string, style: string, text: string, x: number, y: number): void {

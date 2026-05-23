@@ -2,7 +2,7 @@
 // Extends Entity with Defender-specific behaviour: firing alien bullets toward the player ship.
 
 import { Entity }       from '../../../engine/entities/Entity';
-import { mapManager }   from '../../../engine/managers/mapManager';
+import { camera }       from '../../../engine/managers/camera';
 import { randRange }    from '../../../engine/utils/util';
 import { entityManager as defEntityManager } from '../managers/entityManager';
 
@@ -14,7 +14,7 @@ export class Enemy extends Entity {
     maybeFireBullet(du: number): void {
         const fireProb = randRange(0, 1);
         this.timeToFire -= du;
-        if (fireProb < this.chanceOfFire && this.timeToFire <= 0 && mapManager.isOnScreen(this.cx)) {
+        if (fireProb < this.chanceOfFire && this.timeToFire <= 0 && camera.isOnScreen(this.cx)) {
 
             const ship     = defEntityManager._ships[0];
             const rotation = Math.atan2(-(ship.cy - this.cy), (ship.cx - this.cx));
