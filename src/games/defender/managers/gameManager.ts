@@ -18,6 +18,9 @@ export const gameManager = {
     landers:        8,
     newLevel:       2000,
     modulo:         1,
+    freezeTimer:    0,
+
+    startFreeze(nominals: number): void { this.freezeTimer = nominals; },
 
     resetGame(): void {
         entityManager.clearAll();
@@ -35,6 +38,7 @@ export const gameManager = {
         this.landers        = 8;
         this.newLevel       = 2000;
         this.modulo         = 1;
+        this.freezeTimer    = 0;
 
         entityManager._ships[0].reset();
         entityManager._generateParticles();
@@ -57,6 +61,7 @@ export const gameManager = {
         entityManager._generateMotherships();
         this.newLevel       = 2000;
         this.baiterInterval -= 200 / NOMINAL_UPDATE_INTERVAL;
+        this.startFreeze(Math.round(2000 / NOMINAL_UPDATE_INTERVAL)); // ~2 s pause on new level
     },
 
     decreaseLives(): void {

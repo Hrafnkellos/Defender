@@ -239,6 +239,7 @@ export class Ship extends Entity {
         gameManager.decreaseLives();
         this.warp();
         if (this.hasHuman) (this.hasHuman as unknown as {kill(): void}).kill();
+        if (gameManager.lives > 0) gameManager.startFreeze(90); // ~1.5 s pause after death
     }
 
     reset(): void {

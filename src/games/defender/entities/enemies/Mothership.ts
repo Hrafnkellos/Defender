@@ -22,7 +22,7 @@ export class Mothership extends Enemy {
     constructor(descr?: Partial<Record<string, unknown>>) {
         super();
         this.setup(descr ?? {});
-        this.cx          = randRange(0, camera.rightX - this.getRadius());
+        if (!this.cx) this.cx = randRange(0, camera.rightX - this.getRadius());
         this.cy          = randRange(100 + this.getRadius(), g_canvas.height);
         this.travelPoint = randPoint(0, camera.rightX, 100 + this.getRadius(), g_canvas.height);
         this.rateOfFire  = 400;

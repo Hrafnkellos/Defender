@@ -48,6 +48,11 @@ const game = {
         if (eatKey(KEY_RESTART)   && !gameManager.lives) gameManager.resetGame();
         if (eatKey(KEY_QUIT_GAME) && !gameManager.lives) main.gameOver();
 
+        if (gameManager.freezeTimer > 0) {
+            gameManager.freezeTimer = Math.max(0, gameManager.freezeTimer - du);
+            return;
+        }
+
         processDiagnostics();
 
         engineEntityManager.update(du);

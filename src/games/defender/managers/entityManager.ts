@@ -4,7 +4,7 @@
 import { entityManager as engineEntityManager } from '../../../engine/managers/entityManager';
 import { spatialManager } from '../../../engine/managers/spatialManager';
 import { g_canvas }       from '../../../engine/utils/config';
-import { getRandomInt, wrappedDistSq } from '../../../engine/utils/util';
+import { getRandomInt, randRange, wrappedDistSq } from '../../../engine/utils/util';
 import { Vector }         from '../../../engine/rendering/Vector';
 import { camera }     from '../../../engine/managers/camera';
 
@@ -62,7 +62,19 @@ export const entityManager = {
     },
 
     _generateLanders(): void {
-        for (let i = 0; i < gameManager.landers; i++) this.generateLander();
+        const shipX  = this._ships[0]?.cx ?? 2000;
+        const rightX = camera.rightX;
+        const MIN    = 700;
+        for (let i = 0; i < gameManager.landers; i++) {
+            let cx: number, tries = 0;
+            do {
+                cx = randRange(0, rightX);
+                const d = Math.min(Math.abs(cx - shipX), rightX - Math.abs(cx - shipX));
+                if (d >= MIN || ++tries > 20) break;
+            // eslint-disable-next-line no-constant-condition
+            } while (true);
+            this.generateLander({ cx });
+        }
     },
 
     _generateBaiters(): void {
@@ -74,7 +86,19 @@ export const entityManager = {
     },
 
     _generateMotherships(): void {
-        for (let i = 0; i < gameManager.motherships; i++) this.generateMothership();
+        const shipX  = this._ships[0]?.cx ?? 2000;
+        const rightX = camera.rightX;
+        const MIN    = 700;
+        for (let i = 0; i < gameManager.motherships; i++) {
+            let cx: number, tries = 0;
+            do {
+                cx = randRange(0, rightX);
+                const d = Math.min(Math.abs(cx - shipX), rightX - Math.abs(cx - shipX));
+                if (d >= MIN || ++tries > 20) break;
+            // eslint-disable-next-line no-constant-condition
+            } while (true);
+            this.generateMothership({ cx });
+        }
     },
 
     _generateSwarmers(cx: number, cy: number): void {
