@@ -36,6 +36,7 @@ export const gameManager = {
         this.modulo         = 1;
 
         entityManager._ships[0].reset();
+        entityManager._generateParticles();
         entityManager._generateHumans();
         entityManager._generateLanders();
     },
@@ -44,6 +45,7 @@ export const gameManager = {
         entityManager.clearAll();
         entityManager.generateShip({ cx: 2000, cy: 300 });
         entityManager._ships[0].reset();
+        entityManager._generateParticles();
         entityManager._generateHumans();
 
         this.level++;
