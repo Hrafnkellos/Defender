@@ -29,13 +29,20 @@ export const pauseMenu = {
     // Returns true if a step-frame was requested (O key)
     handleInput(): boolean {
         if (this.showingControls) {
-            if (eatKey(KEY_ESC) || eatKey(KEY_ENTER) || eatKey(KEY_SPACE)) {
+            if (eatKey(KEY_ENTER) || eatKey(KEY_SPACE)) {
+                this.showingControls = false;
+            }
+            // Escape goes back only when not in fullscreen (browser owns Escape in fullscreen)
+            if (!document.fullscreenElement && eatKey(KEY_ESC)) {
                 this.showingControls = false;
             }
             return false;
         }
 
-        if (eatKey(KEY_ESC)) { main.paused = false; return false; }
+        // Escape resumes only when not in fullscreen — in fullscreen the browser uses
+        // Escape to exit fullscreen, so we let that happen and keep the menu open.
+        if (!document.fullscreenElement && eatKey(KEY_ESC)) { main.paused = false; return false; }
+        if (document.fullscreenElement) eatKey(KEY_ESC); // consume so it doesn't leak
 
         if (eatKey(KEY_UP))   this.selectedIndex = (this.selectedIndex - 1 + ITEMS.length) % ITEMS.length;
         if (eatKey(KEY_DOWN)) this.selectedIndex = (this.selectedIndex + 1) % ITEMS.length;
@@ -180,6 +187,7 @@ export const pauseMenu = {
         ctx.font      = '13px Georgia';
         ctx.fillStyle = '#777777';
         ctx.textAlign = 'center';
-        ctx.fillText('ESCAPE or ENTER to go back', cx, boxY + boxH - 18);
+        const backHint = document.fullscreenElement ? 'ENTER to go back' : 'ESCAPE or ENTER to go back';
+        ctx.fillText(backHint, cx, boxY + boxH - 18);
     },
 };
