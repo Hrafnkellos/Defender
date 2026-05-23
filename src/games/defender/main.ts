@@ -21,20 +21,14 @@ import { drawWrappedSprite } from './utils/draw';
 // ─── DIAGNOSTICS FLAGS ────────────────────────────────────────────────────────
 
 let g_renderSpatialDebug = false;
-let g_songIsOn           = false;
 
 const KEY_RESTART   = keyCode('Y');
 const KEY_QUIT_GAME = keyCode('N');
 const KEY_MIXED     = keyCode('Z');
 const KEY_SPATIAL   = keyCode('X');
-const KEY_THEME     = keyCode('M');
 const KEY_HALT      = keyCode('H');
 
 function processDiagnostics(): void {
-    if (eatKey(KEY_THEME)) {
-        if (!g_songIsOn) { sound?.playSound(12, 1, 0.1, true, 0); g_songIsOn = true; }
-        else             { sound?.stopSound(); g_songIsOn = false; }
-    }
     if (eatKey(KEY_MIXED))   { /* toggle mixed actions — future use */ }
     if (eatKey(KEY_SPATIAL)) g_renderSpatialDebug = !g_renderSpatialDebug;
     if (eatKey(KEY_HALT))    entityManager.haltShips();
@@ -85,10 +79,6 @@ const game = {
 
     reset(): void {
         gameManager.resetGame();
-        if (g_songIsOn) {
-            sound?.stopSound();
-            sound?.playSound(12, 1, 0.1, true, 0);
-        }
     },
 
     getControls(): string[] {
@@ -100,19 +90,14 @@ const game = {
             'Space            Fire',
             'Ctrl / Tab       Bomb',
             'Shift / E        Hyperspace (warp)',
-            'M                Toggle Music',
             'Escape           Pause Menu',
         ];
     },
 
     onMusicToggle(enabled: boolean): void {
         if (!sound) return;
-        sound.musicEnabled = enabled;
-        if (enabled && g_songIsOn) {
-            sound.playSound(12, 1, 0.1, true, 0);
-        } else if (!enabled) {
-            g_songIsOn = false;
-        }
+        sound.musicEnabled = enabled; // setter stops music when set to false
+        if (enabled) sound.playSound(12, 1, 0.1, true, 0);
     },
 
     onSfxToggle(enabled: boolean): void {

@@ -28,7 +28,7 @@ export const main = {
     _doTimerShow:       false,
     _game:              null as IGame | null,
     paused:             false,
-    musicEnabled:       true,
+    musicEnabled:       false,
     sfxEnabled:         true,
 
     registerGame(game: IGame): void {

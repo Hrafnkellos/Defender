@@ -3,7 +3,7 @@ import { BufferLoader } from '../utils/BufferLoader';
 export class SoundManager {
     buffers: AudioBuffer[] = [];
     sfxEnabled   = true;
-    private _musicEnabled = true;
+    private _musicEnabled = false;
     private context: AudioContext;
     private source: AudioBufferSourceNode | null = null;
 
