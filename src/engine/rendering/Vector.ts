@@ -7,9 +7,32 @@ export class Vector {
         this.y = y;
     }
 
-    add(vector: Vector): void {
-        this.x += vector.x;
-        this.y += vector.y;
+    add(v: Vector): void {
+        this.x += v.x;
+        this.y += v.y;
+    }
+
+    subtract(v: Vector): Vector {
+        return new Vector(this.x - v.x, this.y - v.y);
+    }
+
+    scale(s: number): Vector {
+        return new Vector(this.x * s, this.y * s);
+    }
+
+    normalize(): Vector {
+        const m = this.getMagnitude();
+        return m > 0 ? new Vector(this.x / m, this.y / m) : new Vector(0, 0);
+    }
+
+    dot(v: Vector): number {
+        return this.x * v.x + this.y * v.y;
+    }
+
+    distanceTo(v: Vector): number {
+        const dx = this.x - v.x;
+        const dy = this.y - v.y;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     getMagnitude(): number {

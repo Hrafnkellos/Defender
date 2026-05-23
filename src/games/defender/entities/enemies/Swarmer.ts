@@ -1,6 +1,5 @@
 import { Enemy }          from '../Enemy';
 import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { KILL_ME_NOW }    from '../../../../engine/managers/entityManager';
 import { mapManager }     from '../../../../engine/managers/mapManager';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { sprites }        from '../../sprites';
@@ -36,13 +35,13 @@ export class Swarmer extends Enemy {
         return this.scale * ((sprites.defender3?.width ?? 256) / 2) * 0.9;
     }
 
-    update(du: number): number | void {
+    update(du: number): void {
         spatialManager.unregister(this);
 
         if (this._isDeadNow) {
             this.death();
             defEntityManager.generateParticleExplosion(this.cx, this.cy);
-            return KILL_ME_NOW;
+            return;
         }
 
         sprites.defender3?.animate();

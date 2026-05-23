@@ -1,11 +1,11 @@
 import { Entity }           from '../../../../engine/entities/Entity';
 import { spatialManager }   from '../../../../engine/managers/spatialManager';
-import { KILL_ME_NOW }      from '../../../../engine/managers/entityManager';
 import { mapManager }       from '../../../../engine/managers/mapManager';
 import { NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
-import { wrapRange, drawWrapedLine, wrappedcenteredFillBox } from '../../../../engine/utils/util';
+import { wrapRange, drawWrappedLine, wrappedCenteredFillBox } from '../../../../engine/utils/util';
 import { consts }           from '../../../../engine/utils/config';
 import { sound }            from '../../sound';
+import { IDefenderEntity }  from '../IDefenderEntity';
 
 export class Laser extends Entity {
     rotation:   number = 0;
@@ -27,20 +27,21 @@ export class Laser extends Entity {
     fireSound():   void { sound?.playSound(11, 1, 0.1); }
     zappedSound(): void { sound?.playSound(1,  1, 0.1); }
 
-    update(du: number): number | void {
+    update(du: number): void {
         spatialManager.unregister(this);
 
         this.lifeSpan -= du;
-        if (this.lifeSpan < 0) return KILL_ME_NOW;
+        if (this.lifeSpan < 0) { this.kill(); return; }
 
         this.cx += this.velX * du;
         this.rotation = wrapRange(this.rotation + du, 0, consts.FULL_CIRCLE);
 
         const hit = this.findHitEntityType(["lander", "human", "baiter", "mothership", "swarmer"], true);
         if (hit) {
-            if (hit.takeBulletHit) hit.takeBulletHit.call(hit);
+            (hit as IDefenderEntity).takeBulletHit?.();
             hit.kill();
-            return KILL_ME_NOW;
+            this.kill();
+            return;
         }
 
         this.wrapPosition();
@@ -58,8 +59,8 @@ export class Laser extends Entity {
     render(ctx: CanvasRenderingContext2D): void {
         const fadeThresh = (650 / NOMINAL_UPDATE_INTERVAL) / 3;
         if (this.lifeSpan < fadeThresh) ctx.globalAlpha = this.lifeSpan / fadeThresh;
-        drawWrapedLine(ctx, this.scx, this.scy, this.cx, this.cy, this.eFillStyle);
-        wrappedcenteredFillBox(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), this.getRadius(), this.eFillStyle);
+        drawWrappedLine(ctx, this.scx, this.scy, this.cx, this.cy, this.eFillStyle);
+        wrappedCenteredFillBox(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), this.getRadius(), this.eFillStyle);
         ctx.globalAlpha = 1;
     }
 }

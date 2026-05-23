@@ -1,6 +1,6 @@
 import { NOMINAL_UPDATE_INTERVAL } from '../../../engine/utils/config';
 import { main }             from '../../../engine/core/main';
-import { centeredStrokeBox, wrappedcenteredFillBox, writeText } from '../../../engine/utils/util';
+import { centeredStrokeBox, wrappedCenteredFillBox, writeText } from '../../../engine/utils/util';
 import { entityManager }    from './entityManager';
 import { sprites }          from '../sprites';
 
@@ -102,7 +102,7 @@ export const gameManager = {
         }
 
         if (this.lives <= 0) {
-            wrappedcenteredFillBox(ctx, 450, 250, 300, 200, "black");
+            wrappedCenteredFillBox(ctx, 450, 250, 300, 200, "black");
             centeredStrokeBox(ctx, 450, 250, 300, 200, "white");
             writeText(ctx, "30px Georgia", "white", "Game over",   420, 230);
             writeText(ctx, "15px Georgia", "white", "Play again?", 490, 260);

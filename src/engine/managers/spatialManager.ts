@@ -32,6 +32,7 @@ export const spatialManager = {
 
     findEntityInRange(posX: number, posY: number, radius: number): IEntity | undefined {
         for (const e of _entities) {
+            if (e._isDeadNow) continue;
             const dx = e.getPos().posX - posX;
             const dy = e.getPos().posY - posY;
             const r  = e.getRadius() + radius;
@@ -46,6 +47,7 @@ export const spatialManager = {
         callerMapping?: [number, number, number][]
     ): IEntity | undefined {
         for (const e of _entities) {
+            if (e._isDeadNow) continue;
             if (!types.includes(e.entityType ?? '')) continue;
             // Prefer the caller's shape, fall back to the entity's own shape, then plain circle
             const mapping = callerMapping ?? e.spatialMapping;

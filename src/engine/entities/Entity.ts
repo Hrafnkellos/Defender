@@ -11,7 +11,7 @@ export class Entity implements IEntity {
     cy:           number = 0;
     entityType?:  string;
     spatialMapping?: [number, number, number][];
-    eFillStyle:   string = "000000";
+    eFillStyle:   string = "#000000";
     _spatialID:   number = 0;
     _isDeadNow:   boolean = false;
 
@@ -72,19 +72,9 @@ export class Entity implements IEntity {
 
     wrapPosition(): void {
         this.cx = wrapRange(this.cx, 0, mapManager.rightX);
-        if (this.cx < mapManager.leftX)
-            this.cx = mapManager.screenRight - (mapManager.leftX + this.cx);
-        if (this.cx > mapManager.rightX)
-            this.cx = mapManager.screenLeft + (this.cx - mapManager.rightX);
-    }
-
-    wrapMainView(x: number): void {
-        x = wrapRange(x, 0, mapManager.rightX);
-        mapManager.screenLeft  = x - 450;
-        mapManager.screenRight = x + 450;
     }
 
     // To be implemented by subclasses
-    update(_du: number): number | void { return; }
-    render(_ctx: CanvasRenderingContext2D): void { return; }
+    update(_du: number): void { }
+    render(_ctx: CanvasRenderingContext2D): void { }
 }

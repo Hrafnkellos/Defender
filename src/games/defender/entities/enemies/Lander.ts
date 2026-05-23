@@ -1,6 +1,5 @@
 import { Enemy }          from '../Enemy';
 import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { KILL_ME_NOW }    from '../../../../engine/managers/entityManager';
 import { mapManager }     from '../../../../engine/managers/mapManager';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { randRange, randPoint, moveAround } from '../../../../engine/utils/util';
@@ -38,7 +37,7 @@ export class Lander extends Enemy {
         return this.scale * ((sprite?.width ?? 128) / 2) * 0.9;
     }
 
-    update(du: number): number | void {
+    update(du: number): void {
         const sprite = this.mutated ? sprites.mutant : sprites.lander;
         sprite?.animate();
         spatialManager.unregister(this);
@@ -47,7 +46,7 @@ export class Lander extends Enemy {
             this.death();
             this.releaseHuman();
             defEntityManager.generateParticleExplosion(this.cx, this.cy);
-            return KILL_ME_NOW;
+            return;
         }
 
         const top = 100 + this.getRadius();

@@ -1,6 +1,5 @@
 import { Entity }         from '../../../../engine/entities/Entity';
 import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { KILL_ME_NOW }    from '../../../../engine/managers/entityManager';
 import { mapManager }     from '../../../../engine/managers/mapManager';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { getRandomInt, randRange, moveAround } from '../../../../engine/utils/util';
@@ -55,10 +54,10 @@ export class Human extends Entity {
 
     takeBulletHit(): void { this.kill(); }
 
-    update(du: number): number | void {
+    update(du: number): void {
         sprites.human?.animate();
         spatialManager.unregister(this);
-        if (this._isDeadNow) return KILL_ME_NOW;
+        if (this._isDeadNow) return;
 
         if (this.isAbducted && this.abductor) {
             this.travelPoint = this.abductor.getPos();

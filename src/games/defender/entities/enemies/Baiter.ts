@@ -1,6 +1,5 @@
 import { Enemy }          from '../Enemy';
 import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { KILL_ME_NOW }    from '../../../../engine/managers/entityManager';
 import { mapManager }     from '../../../../engine/managers/mapManager';
 import { randRange, moveAround } from '../../../../engine/utils/util';
 import { sprites }        from '../../sprites';
@@ -37,14 +36,14 @@ export class Baiter extends Enemy {
     get scale(): number { return (this as unknown as {_scale?: number})._scale ?? 0.18; }
     set scale(v: number) { (this as unknown as {_scale: number})._scale = v; }
 
-    update(du: number): number | void {
+    update(du: number): void {
         sprites.creep1?.animate();
         spatialManager.unregister(this);
 
         if (this._isDeadNow) {
             this.death();
             defEntityManager.generateParticleExplosion(this.cx, this.cy);
-            return KILL_ME_NOW;
+            return;
         }
 
         const hit = this.isColliding();

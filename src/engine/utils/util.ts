@@ -141,7 +141,7 @@ export function fillCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: num
     ctx.fillStyle = old;
 }
 
-export function WrappedFillCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, style: string): void {
+export function wrappedFillCircleStyle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, style: string): void {
     fillCircleStyle(ctx, x,                           y, r, style);
     fillCircleStyle(ctx, x - mapManager.rightX, y, r, style);
     fillCircleStyle(ctx, x + mapManager.rightX, y, r, style);
@@ -165,7 +165,7 @@ export function drawLine(ctx: CanvasRenderingContext2D, sx: number, sy: number, 
     ctx.strokeStyle = old;
 }
 
-export function drawWrapedLine(ctx: CanvasRenderingContext2D, sx: number, sy: number, ex: number, ey: number, style: string): void {
+export function drawWrappedLine(ctx: CanvasRenderingContext2D, sx: number, sy: number, ex: number, ey: number, style: string): void {
     const mm = mapManager;
     if (sx > 3500 && ex < 1000) {
         drawLine(ctx, sx - mm.screenLeft - mm.rightX, sy, ex - mm.screenLeft,            ey, style);
@@ -192,7 +192,7 @@ export function centeredFillBox(ctx: CanvasRenderingContext2D, x: number, y: num
     ctx.fillStyle = old;
 }
 
-export function wrappedcenteredFillBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, style: string): void {
+export function wrappedCenteredFillBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, style: string): void {
     centeredFillBox(ctx, x,                           y, w, h, style);
     centeredFillBox(ctx, x - mapManager.rightX, y, w, h, style);
     centeredFillBox(ctx, x + mapManager.rightX, y, w, h, style);

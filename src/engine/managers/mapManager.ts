@@ -1,6 +1,6 @@
 // mapManager — world/screen coordinate translation, wrapping, landscape and minimap rendering.
 
-import { g_canvas }       from '../utils/config';
+import { g_canvas }                        from '../utils/config';
 import { drawLine, wrapRange, fillCircle } from '../utils/util';
 
 // Game can set these callbacks during initialization to supply game-specific data.
@@ -13,6 +13,13 @@ export const mapManager = {
     rightX:      4000,
     screenLeft:  1550,
     screenRight: 2450,
+
+    scrollToFollow(x: number): void {
+        const hw = g_canvas.width / 2;
+        x = wrapRange(x, 0, this.rightX);
+        this.screenLeft  = x - hw;
+        this.screenRight = x + hw;
+    },
 
     setShipPosFn(fn: () => { posX: number; posY: number }): void {
         _shipPosFn = fn;
@@ -49,8 +56,8 @@ export const mapManager = {
         );
         drawLine(ctx, 0, 100, g_canvas.width, 100, "#76EEC6");
 
-        const frameLeft  = this.transposeToMinimap(1550, 0).posX;
-        const frameRight = this.transposeToMinimap(2450, 0).posX;
+        const frameLeft  = this.transposeXToMinimap(this.screenLeft);
+        const frameRight = this.transposeXToMinimap(this.screenRight);
         const lc         = "white";
 
         drawLine(ctx, frameLeft,  0,   frameLeft,  20,  lc);

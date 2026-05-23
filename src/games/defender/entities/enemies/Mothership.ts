@@ -1,6 +1,5 @@
 import { Enemy }          from '../Enemy';
 import { spatialManager } from '../../../../engine/managers/spatialManager';
-import { KILL_ME_NOW }    from '../../../../engine/managers/entityManager';
 import { mapManager }     from '../../../../engine/managers/mapManager';
 import { g_canvas }       from '../../../../engine/utils/config';
 import { randRange, randPoint, moveAround } from '../../../../engine/utils/util';
@@ -35,7 +34,7 @@ export class Mothership extends Enemy {
         return this.scale * ((sprites.defender2?.width ?? 256) / 2) * 0.9;
     }
 
-    update(du: number): number | void {
+    update(du: number): void {
         sprites.defender2?.animate();
         spatialManager.unregister(this);
 
@@ -43,7 +42,7 @@ export class Mothership extends Enemy {
             this.death();
             defEntityManager._generateSwarmers(this.cx, this.cy);
             defEntityManager.generateParticleExplosion(this.cx, this.cy);
-            return KILL_ME_NOW;
+            return;
         }
 
         const tv = moveAround(this.travelPoint, this as unknown as Parameters<typeof moveAround>[1], 100 + this.getRadius(), g_canvas.height, 3);

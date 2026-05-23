@@ -1,12 +1,12 @@
 import { Entity }           from '../../../../engine/entities/Entity';
 import { spatialManager }   from '../../../../engine/managers/spatialManager';
-import { KILL_ME_NOW }      from '../../../../engine/managers/entityManager';
 import { mapManager }       from '../../../../engine/managers/mapManager';
 import { NOMINAL_UPDATE_INTERVAL } from '../../../../engine/utils/config';
 import { wrapRange }        from '../../../../engine/utils/util';
 import { consts }           from '../../../../engine/utils/config';
 import { sound }            from '../../sound';
 import { sprites }          from '../../sprites';
+import { IDefenderEntity }  from '../IDefenderEntity';
 
 export class Bullet extends Entity {
     rotation:   number = 0;
@@ -24,11 +24,11 @@ export class Bullet extends Entity {
     fireSound():   void { sound?.playSound(0, 1, 0.1); }
     zappedSound(): void { sound?.playSound(1, 1, 0.1); }
 
-    update(du: number): number | void {
+    update(du: number): void {
         spatialManager.unregister(this);
 
         this.lifeSpan -= du;
-        if (this.lifeSpan < 0) return KILL_ME_NOW;
+        if (this.lifeSpan < 0) { this.kill(); return; }
 
         this.cx += this.velX * du;
         this.cy += this.velY * du;
@@ -36,8 +36,9 @@ export class Bullet extends Entity {
 
         const hit = this.findHitEntity();
         if (hit) {
-            if (hit.takeBulletHit) hit.takeBulletHit.call(hit);
-            return KILL_ME_NOW;
+            (hit as IDefenderEntity).takeBulletHit?.();
+            this.kill();
+            return;
         }
 
         spatialManager.register(this);

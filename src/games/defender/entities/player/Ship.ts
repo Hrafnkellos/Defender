@@ -3,7 +3,7 @@ import { spatialManager } from '../../../../engine/managers/spatialManager';
 import { mapManager }     from '../../../../engine/managers/mapManager';
 import { g_canvas, SECS_TO_NOMINALS, consts } from '../../../../engine/utils/config';
 import { keys, eatKey }   from '../../../../engine/input/keys';
-import { isBetween, WrappedFillCircleStyle, wrappedStrokeCircleStyle } from '../../../../engine/utils/util';
+import { isBetween, wrappedFillCircleStyle, wrappedStrokeCircleStyle } from '../../../../engine/utils/util';
 import { sprites }        from '../../sprites';
 import { sound }          from '../../sound';
 import { entityManager as defEntityManager } from '../../managers/entityManager';
@@ -92,7 +92,7 @@ export class Ship extends Entity {
         }
     }
 
-    update(du: number): number | void {
+    update(du: number): void {
         if (this._isWarping) { this._updateWarp(du); return; }
 
         spatialManager.unregister(this);
@@ -110,7 +110,7 @@ export class Ship extends Entity {
             this.cx += this.flipp ? -1000 : 1000;
 
         if (this.cameraMode) this.MainCamera(du);
-        else                 this.wrapMainView(this.cx);
+        else                 mapManager.scrollToFollow(this.cx);
 
         const types = ["lander", "human", "alienbullet", "baiter", "mothership", "swarmer"];
 
@@ -159,7 +159,7 @@ export class Ship extends Entity {
         if (this.screenX - this.cx >  this.screenPadding) this.screenX = this.cx + this.screenPadding;
         else if (this.screenX - this.cx < -this.screenPadding) this.screenX = this.cx - this.screenPadding;
 
-        this.wrapMainView(this.screenX);
+        mapManager.scrollToFollow(this.screenX);
     }
 
     computeSubStep(du: number): void {
@@ -254,8 +254,7 @@ export class Ship extends Entity {
         this.forcefield = true;
         this.explode();
         this.halt();
-        mapManager.screenLeft  = this.cx - 450;
-        mapManager.screenRight = this.cx + 450;
+        mapManager.scrollToFollow(this.cx);
     }
 
     halt(): void {
@@ -269,7 +268,7 @@ export class Ship extends Entity {
         sprite.scale = this._scale;
         sprite.drawWrappedCentredAt(ctx, this.cx - mapManager.screenLeft, this.cy, this.rotation - 1.555, this.flipp);
         if (this.forcefield) {
-            WrappedFillCircleStyle(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,0.1)");
+            wrappedFillCircleStyle(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,0.1)");
             wrappedStrokeCircleStyle(ctx, this.cx - mapManager.screenLeft, this.cy, this.getRadius(), "rgba(0,0,255,1)");
         }
     }

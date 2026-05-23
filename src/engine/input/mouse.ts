@@ -13,8 +13,10 @@ export function setMouseClickHandler(fn: (x: number, y: number) => void): void {
 }
 
 function handleMouse(evt: MouseEvent): void {
-    mouseX = evt.clientX - g_canvas.offsetLeft;
-    mouseY = evt.clientY - g_canvas.offsetTop;
+    const scaleX = g_canvas.width  / g_canvas.offsetWidth;
+    const scaleY = g_canvas.height / g_canvas.offsetHeight;
+    mouseX = (evt.clientX - g_canvas.offsetLeft) * scaleX;
+    mouseY = (evt.clientY - g_canvas.offsetTop)  * scaleY;
 
     const button = evt.buttons !== undefined ? evt.buttons : (evt as MouseEvent & { which: number }).which;
     if (!button) return;

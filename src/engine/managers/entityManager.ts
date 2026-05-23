@@ -2,10 +2,9 @@
 // Games register their entity arrays via addCategory().
 // The engine handles the update/render loop generically.
 
-import { mapManager } from './mapManager';
-import { IEntity }    from '../entities/IEntity';
-
-export const KILL_ME_NOW = -1 as const;
+import { mapManager }     from './mapManager';
+import { spatialManager } from './spatialManager';
+import { IEntity }        from '../entities/IEntity';
 
 export const entityManager = {
 
@@ -19,8 +18,14 @@ export const entityManager = {
         for (const cat of this._categories) {
             let i = 0;
             while (i < cat.length) {
-                if (cat[i].update(du) === KILL_ME_NOW) cat.splice(i, 1);
-                else ++i;
+                const entity = cat[i];
+                entity.update(du);
+                if (entity._isDeadNow) {
+                    spatialManager.unregister(entity);
+                    cat.splice(i, 1);
+                } else {
+                    ++i;
+                }
             }
         }
     },
