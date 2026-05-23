@@ -22,7 +22,7 @@ Then open `http://localhost:5173` in your browser.
 
 ## Controls
 
-Press **Escape** at any time to open the pause menu, which has options for Resume, Replay, Controls, Music, Sound FX, Fullscreen, and Quit.
+Press **Escape** at any time to open the pause menu (Resume, Replay, Controls, Music, Sound FX, Quit). The game canvas always fills the browser window — press **F11** for true fullscreen.
 
 | Key | Action |
 |---|---|
@@ -35,6 +35,7 @@ Press **Escape** at any time to open the pause menu, which has options for Resum
 | Shift / E | Hyperspace (warp) |
 | M | Toggle music |
 | Escape | Pause menu |
+| F11 | True fullscreen (browser) |
 
 ## Project structure
 

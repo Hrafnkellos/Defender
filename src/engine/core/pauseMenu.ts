@@ -8,18 +8,17 @@ const KEY_SPACE = 32;
 const KEY_ESC   = 27;
 const KEY_STEP  = 'O'.charCodeAt(0);
 
-type MenuAction = 'resume' | 'replay' | 'controls' | 'music' | 'sfx' | 'fullscreen' | 'quit';
+type MenuAction = 'resume' | 'replay' | 'controls' | 'music' | 'sfx' | 'quit';
 
 interface MenuItem { label(): string; action: MenuAction; }
 
 const ITEMS: MenuItem[] = [
-    { label: () => 'Resume',                                         action: 'resume'     },
-    { label: () => 'Replay',                                         action: 'replay'     },
-    { label: () => 'Controls',                                       action: 'controls'   },
-    { label: () => `Music:    ${main.musicEnabled ? 'ON ' : 'OFF'}`, action: 'music'      },
-    { label: () => `Sound FX: ${main.sfxEnabled   ? 'ON ' : 'OFF'}`, action: 'sfx'        },
-    { label: () => 'Fullscreen',                                     action: 'fullscreen' },
-    { label: () => 'Quit',                                           action: 'quit'       },
+    { label: () => 'Resume',                                         action: 'resume'   },
+    { label: () => 'Replay',                                         action: 'replay'   },
+    { label: () => 'Controls',                                       action: 'controls' },
+    { label: () => `Music:    ${main.musicEnabled ? 'ON ' : 'OFF'}`, action: 'music'    },
+    { label: () => `Sound FX: ${main.sfxEnabled   ? 'ON ' : 'OFF'}`, action: 'sfx'      },
+    { label: () => 'Quit',                                           action: 'quit'     },
 ];
 
 export const pauseMenu = {
@@ -29,20 +28,13 @@ export const pauseMenu = {
     // Returns true if a step-frame was requested (O key)
     handleInput(): boolean {
         if (this.showingControls) {
-            if (eatKey(KEY_ENTER) || eatKey(KEY_SPACE)) {
-                this.showingControls = false;
-            }
-            // Escape goes back only when not in fullscreen (browser owns Escape in fullscreen)
-            if (!document.fullscreenElement && eatKey(KEY_ESC)) {
+            if (eatKey(KEY_ESC) || eatKey(KEY_ENTER) || eatKey(KEY_SPACE)) {
                 this.showingControls = false;
             }
             return false;
         }
 
-        // Escape resumes only when not in fullscreen — in fullscreen the browser uses
-        // Escape to exit fullscreen, so we let that happen and keep the menu open.
-        if (!document.fullscreenElement && eatKey(KEY_ESC)) { main.paused = false; return false; }
-        if (document.fullscreenElement) eatKey(KEY_ESC); // consume so it doesn't leak
+        if (eatKey(KEY_ESC)) { main.paused = false; return false; }
 
         if (eatKey(KEY_UP))   this.selectedIndex = (this.selectedIndex - 1 + ITEMS.length) % ITEMS.length;
         if (eatKey(KEY_DOWN)) this.selectedIndex = (this.selectedIndex + 1) % ITEMS.length;
@@ -73,9 +65,6 @@ export const pauseMenu = {
             case 'sfx':
                 main.sfxEnabled = !main.sfxEnabled;
                 main._game?.onSfxToggle?.(main.sfxEnabled);
-                break;
-            case 'fullscreen':
-                main.toggleFullscreen();
                 break;
             case 'quit':
                 main.gameOver();
@@ -187,7 +176,6 @@ export const pauseMenu = {
         ctx.font      = '13px Georgia';
         ctx.fillStyle = '#777777';
         ctx.textAlign = 'center';
-        const backHint = document.fullscreenElement ? 'ENTER to go back' : 'ESCAPE or ENTER to go back';
-        ctx.fillText(backHint, cx, boxY + boxH - 18);
+        ctx.fillText('ESCAPE or ENTER to go back', cx, boxY + boxH - 18);
     },
 };

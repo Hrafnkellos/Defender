@@ -75,14 +75,6 @@ export const main = {
         console.log("gameOver: quitting...");
     },
 
-    toggleFullscreen(): void {
-        if (!document.fullscreenElement) {
-            g_canvas.requestFullscreen().catch(err => console.warn('Fullscreen error:', err));
-        } else {
-            document.exitFullscreen();
-        }
-    },
-
     _requestNextIteration(): void {
         window.requestAnimationFrame((t) => this.iter(t));
     },
@@ -102,39 +94,22 @@ export const main = {
 
     init(): void {
         g_ctx.fillStyle = "white";
-        document.addEventListener('fullscreenchange', _onFullscreenChange);
+        _resizeCanvas();
+        window.addEventListener('resize', _resizeCanvas);
         this._requestNextIteration();
     }
 
 };
 
-function _onFullscreenChange(): void {
-    if (document.fullscreenElement === g_canvas) {
-        const aspect = g_canvas.width / g_canvas.height;
-        const wW = window.innerWidth;
-        const wH = window.innerHeight;
-        let cssW: number, cssH: number;
-        if (wW / wH > aspect) {
-            cssH = wH;
-            cssW = wH * aspect;
-        } else {
-            cssW = wW;
-            cssH = wW / aspect;
-        }
-        g_canvas.style.width      = cssW + 'px';
-        g_canvas.style.height     = cssH + 'px';
-        g_canvas.style.position   = 'fixed';
-        g_canvas.style.top        = '50%';
-        g_canvas.style.left       = '50%';
-        g_canvas.style.transform  = 'translate(-50%, -50%)';
-        g_canvas.style.background = 'black';
+function _resizeCanvas(): void {
+    const aspect = g_canvas.width / g_canvas.height;
+    const wW = window.innerWidth;
+    const wH = window.innerHeight;
+    if (wW / wH > aspect) {
+        g_canvas.style.width  = (wH * aspect) + 'px';
+        g_canvas.style.height = wH + 'px';
     } else {
-        g_canvas.style.width     = '';
-        g_canvas.style.height    = '';
-        g_canvas.style.position  = '';
-        g_canvas.style.top       = '';
-        g_canvas.style.left      = '';
-        g_canvas.style.transform = '';
-        g_canvas.style.background = '';
+        g_canvas.style.width  = wW + 'px';
+        g_canvas.style.height = (wW / aspect) + 'px';
     }
 }
